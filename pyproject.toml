@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "talkhub"
+version = "0.1.0"
+description = ""
+authors = ["san0kq <sanrom94@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.4"
+dacite = "^1.8.1"
+pillow = "^10.0.0"
+pre-commit = "3.3.3"
+python-decouple = "^3.8"
+psycopg2-binary = "^2.9.7"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.3.3"
+
+[tool.mypy]
+mypy_path = "src/talkhub"
+disallow_untyped_defs = true
+check_untyped_defs = true
+strict_optional = true
+no_implicit_optional = true
+warn_return_any = true
+show_error_codes = true
+warn_unused_ignores = true
+
+[tool.black]
+target-version = ["py311"]
+line-length = 120
+include_trailing_comma = true
+
+[tool.isort]
+profile = "black"
+line_length = 120
+include_trailing_comma = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
