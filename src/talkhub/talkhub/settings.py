@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from decouple import config
+
+from .logger_formatter import ContextFormatter
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-dfa1-28$)ion!t7=+q^yr3mgm-3lik8wro66i(t!a%hx*nzpv7"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", cast=bool)
 
 ALLOWED_HOSTS: list = []
 
@@ -37,6 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "accounts",
+    "core",
 ]
 
 MIDDLEWARE = [
@@ -54,7 +61,11 @@ ROOT_URLCONF = "talkhub.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            "templates",
+            "accounts/presentation/templates",
+            "core/presentation/templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -116,8 +127,43 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# Media files (Images)
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Configure logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "console_formatter": {
+            "()": ContextFormatter,
+            "format": "{asctime} - {levelname} - {name} - {module}:{funcName}:{lineno} - {message}",
+            "style": "{",
+        }
+    },
+    "handlers": {
+        "console_handler": {
+            "class": "logging.StreamHandler",
+            "level": config("LOG_LEVEL"),
+            "formatter": "console_formatter",
+        }
+    },
+    "loggers": {
+        "root": {"level": config("LOG_LEVEL"), "handlers": ["console_handler"]},
+        "django": {
+            "level": "INFO",
+            "handlers": ["console_handler"],
+        },
+        "PIL": {"level": "WARNING", "handlers": ["console_handler"]},
+    },
+}
