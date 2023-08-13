@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-__all__ = ["admin"]
+from .models import User
+
+admin.site.register(User)
