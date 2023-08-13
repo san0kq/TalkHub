@@ -1,0 +1,98 @@
+.company {
+    margin: 2rem auto;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .logo-main {
+    width: 400px;
+    margin-right: 1rem;
+  }
+  .company-info {
+    text-align: left;
+  }
+  h2 {
+    margin-bottom: 0.5rem;
+    font-size: 24px;
+  }
+  p {
+    margin-bottom: 0.5rem;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+  a {
+    color: #333;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  .about-info {
+    margin: 2rem auto;
+    margin-left: 15rem;
+    margin-right: 15rem;
+  }
+  .reviews {
+    max-width: 1500px;
+    margin-left: 15rem;
+    margin-right: 15rem;
+    margin-top: 2rem;
+  }
+  
+  .review {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .review-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .img-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .review-text {
+    display: flex;
+    width: 500px;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    word-wrap: break-word;
+    margin-left: 15px;
+  }
+  
+  .user-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .publication-date {
+    align-self: flex-end;
+    font-size: 12px;
+    color: #999;
+  }
+  .review-action {
+    display: flex;
+    justify-content: space-between;
+  }
+  .button-review {
+    height: 50px;
+    width: 150px;
+    background-color: #333;
+    color: aliceblue;
+    font-size: 20px;
+    cursor: pointer;
+  }

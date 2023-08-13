@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+{% block static %}
+<link rel="stylesheet" type="text/css" href="{% static "css/core/index.css" %}" type=”image/x-icon”>
+{% endblock static %}
+{% block body %}
+<div class="reviews">
+    <hr>
+    <div class="review-action">
+      <h2>Reviews</h2>
+      <button class="button-review" onclick="window.location.href='{% url 'company-review' company.pk %}';">Create review</button>
+    </div>
+    {% for review in company.reviews.all %}
+      <div class="review">
+        <div class="review-avatar">
+        {% if review.user.profile.avatar %}
+          <img src="{{ review.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
+        {% else %}
+          <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
+        {% endif %}
+        </div>
+        <div class="review-text">
+          <div class="user-name">{{ review.user.first_name }} {{ review.user.last_name }}</div>
+          <p>{{ review.text }}</p>
+          <div class="publication-date">{{ review.created_at }}</div>
+        </div>
+      </div>
+    {% endfor %}
+</div>
+{% endblock body %}

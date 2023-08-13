@@ -1,5 +1,6 @@
+from core.presentation.views import IndexView
 from django.urls import path
 
-__all__ = ["path"]
-
-urlpatterns: list = []
+urlpatterns = [
+    path("", IndexView.as_view(), name="index"),
+]
