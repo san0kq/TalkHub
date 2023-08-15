@@ -5,25 +5,24 @@
 <link rel="stylesheet" type="text/css" href="{% static "css/core/index.css" %}" type=”image/x-icon”>
 {% endblock static %}
 {% block body %}
-<div class="reviews">
+<div class="tweets">
     <hr>
-    <div class="review-action">
-      <h2>Reviews</h2>
-      <button class="button-review" onclick="window.location.href='{% url 'company-review' company.pk %}';">Create review</button>
+    <div class="tweets-action">
+      <h2>Tweets</h2>
     </div>
-    {% for review in company.reviews.all %}
-      <div class="review">
-        <div class="review-avatar">
-        {% if review.user.profile.avatar %}
-          <img src="{{ review.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
+    {% for tweet in tweets %}
+      <div class="tweet">
+        <div class="tweet-avatar">
+        {% if 0 %}
+          <img src="" alt="avatar-alt" class="img-avatar">
         {% else %}
           <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
         {% endif %}
         </div>
-        <div class="review-text">
-          <div class="user-name">{{ review.user.first_name }} {{ review.user.last_name }}</div>
-          <p>{{ review.text }}</p>
-          <div class="publication-date">{{ review.created_at }}</div>
+        <div class="tweet-text">
+          <div class="user-name">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
+          <p>{{ tweet.text }}</p>
+          <div class="publication-date">{{ tweet.created_at }}</div>
         </div>
       </div>
     {% endfor %}

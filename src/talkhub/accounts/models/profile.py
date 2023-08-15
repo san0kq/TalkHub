@@ -24,7 +24,7 @@ class Profile(BaseModel):
         related_query_name="profile",
     )
     followings = models.ManyToManyField(
-        to="self", symmetrical=False, related_name="profiles", related_query_name="profile"
+        to="self", symmetrical=False, related_name="profiles", related_query_name="profile", blank=True
     )
 
     class Meta:

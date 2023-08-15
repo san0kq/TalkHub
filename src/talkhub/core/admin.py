@@ -1,3 +1,10 @@
+from core.models import Notification, NotificationType, Rating, Retweet, Tag, Tweet, TweetRating
 from django.contrib import admin
 
-__all__ = ["admin"]
+admin.site.register(NotificationType)
+admin.site.register(Notification)
+admin.site.register(Rating)
+admin.site.register(Retweet)
+admin.site.register(Tag)
+admin.site.register(TweetRating)
+admin.site.register(Tweet)

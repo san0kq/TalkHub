@@ -15,13 +15,13 @@
         </div>
         <ul>
           <li><a href="{% url 'index' %}">Home</a></li>
-          <li><a href="{% url 'add-vacancy' %}">Trending in your country</a></li>
-          <li><a href="{% url 'add-company' %}">Tags</a></li>
+          <li><a href="">Trending in your country</a></li>
+          <li><a href="">Tags</a></li>
         </ul>
         {% if user.username %}
           <div class="avatar">
             <img class="default-image" src="{% static "image/default-avatar.png" %}" alt="AVATAR_ALT">
-            <a href="{% url 'profile' %}">Profile</a>
+            <a href="">Profile</a>
           </div>
         {% else %}
           <ul>
