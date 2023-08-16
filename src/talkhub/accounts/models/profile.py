@@ -7,7 +7,7 @@ class Profile(BaseModel):
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     avatar = models.ImageField(upload_to="avatar/", null=True, blank=True)
-    about = models.CharField(max_length=400)
+    about = models.CharField(max_length=400, null=True, blank=True)
     country = models.ForeignKey(
         to="Country",
         null=True,

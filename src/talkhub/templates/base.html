@@ -18,15 +18,15 @@
           <li><a href="">Trending in your country</a></li>
           <li><a href="">Tags</a></li>
         </ul>
-        {% if user.username %}
+        {% if user.is_authenticated %}
           <div class="avatar">
             <img class="default-image" src="{% static "image/default-avatar.png" %}" alt="AVATAR_ALT">
             <a href="">Profile</a>
           </div>
         {% else %}
           <ul>
-            <li><a href="">Log in</a></li>
-            <li><a href="">Sign up</a></li>
+            <li><a href="{% url 'signin' %}">Log in</a></li>
+            <li><a href="{% url 'signup' %}">Sign up</a></li>
           </ul>
         {% endif %}
         
