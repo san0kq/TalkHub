@@ -23,6 +23,8 @@ from core.presentation.converters import convert_data_from_form_to_dto
 
 class RegistrationView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            return redirect("index")
         form = RegistrationForm()
         context = {"form": form}
         return render(request, "registration.html", context=context)

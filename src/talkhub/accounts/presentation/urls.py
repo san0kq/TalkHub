@@ -1,4 +1,11 @@
-from accounts.presentation.views import LoginView, LogoutView, RegistrationConfirmationView, RegistrationView
+from accounts.presentation.views import (
+    LoginView,
+    LogoutView,
+    ProfileEditView,
+    ProfileView,
+    RegistrationConfirmationView,
+    RegistrationView,
+)
 from django.urls import path
 
 urlpatterns = [
@@ -6,4 +13,6 @@ urlpatterns = [
     path("signup/", RegistrationView.as_view(), name="signup"),
     path("confirmation/", RegistrationConfirmationView.as_view(), name="confirm-signup"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path("profile/", ProfileView.as_view(), name="profile"),
+    path("profile/edit", ProfileEditView.as_view(), name="profile_edit"),
 ]

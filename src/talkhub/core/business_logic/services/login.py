@@ -16,4 +16,4 @@ def authenticate_user(data: LoginDTO) -> AbstractBaseUser:
     if user:
         return user
     else:
-        raise InvalidAuthCredentials
+        raise InvalidAuthCredentials("Invalid credentials.")

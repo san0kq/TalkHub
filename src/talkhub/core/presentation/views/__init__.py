@@ -1,3 +1,5 @@
 from .tweet import IndexView
+from .config import UpdateConfig
 
-__all__ = ["IndexView"]
+
+__all__ = ["IndexView", "UpdateConfig"]

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ profile.profile.first_name}} {{ profile.profile.last_name }}{% endblock title %}
+{% block static %}
+<link rel="stylesheet" type="text/css" href="{% static "css/accounts/profile.css" %}" type=”image/x-icon”>
+{% endblock static %}
+{% block body %}
+<div class="profile">
+  <div>
+    <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="avatar-main">
+  </div>
+  <div class="profile-info">
+    <div class="profile-edit">
+      <h2>{{ profile.profile.first_name}} {{ profile.profile.last_name }}</h2>
+      <a href="{% url 'profile_edit' %}" class="btn-edit">&#9997;</a>
+    </div>
+    <p>Username: {{ profile.username }}</p>
+    <p>Email: {{ profile.email }}</p>
+    <p>Registred at: {{ profile.date_joined }}</p>
+  </div>
+  <div class="profile-config">
+    <h2>Settings</h2>
+    <div class="order-config">
+      Order of displaying tweets on the main page:
+      <select class="order-select" id="order-select" onchange="updateConfig()">
+        {% if profile.configs.tweets_order == "-created_at" %}
+          <option selected>Date of published</option>
+          <option>Ratings count</option>
+        {% else %}
+          <option>Date of published</option>
+          <option selected>Ratings count</option>
+        {% endif %}
+      </select>
+    </div>
+    <button type="submit" class="btn-logout" onclick="window.location.href='{% url 'logout' %}'; return false">Logout</button>
+  </div>
+</div>
+<h2>About me</h2>
+<p>{{ profile.about }}</p>
+<hr>
+<div class="tweets" id="tweets">
+  <h2>Tweets</h2>
+  {% for tweet in tweets %}
+    <div class="tweet">
+      <div class="tweet-avatar">
+      {% if 0 %}
+        <img src="" alt="avatar-alt" class="img-avatar">
+      {% else %}
+        <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
+      {% endif %}
+      </div>
+      <div class="tweet-info">
+        {% if tweet.is_retweet %}
+          <div class="retweet-user-info">{{ tweet.retweets.first.user.profile.first_name }} {{ tweet.retweets.first.user.profile.last_name }} retweeted this at {{ tweet.retweets.first.created_at }}</div>
+        {% endif %}
+        <div class="tweet-user-info">
+          <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
+          <div class="username" id="username">@{{ tweet.user.username }}</div>
+        </div>
+        
+        <p class="tweet-text" id="tweet-text">{{ tweet.text }}</p>
+        <div class="tweet-action">
+          <div class="tweet-rating">
+            <button class="like" id="like">&#10084;</button>
+            <div class="like-count" id="like-count">{{ tweet.rating_count }}</div>
+          </div>
+          <div class="tweet-reply">
+            <button class="reply" id="reply">&#128101;</button>
+            <div class="reply-count" id="reply-count">{{ tweet.reply_count }}</div>
+          </div>
+          <div class="tweet-retweet">
+            <button class="retweet" id="retweet">&#128257;</button>
+            <div class="retweet-count" id="retweet-count">{{ tweet.retweet_count }}</div>
+          </div>
+          <div class="publication-date">{{ tweet.created_at }}</div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  {% if prev_page %}
+    <a href="{% url 'profile' %}?page={{ prev_page }}">Prev</a>
+  {% endif %}
+  {% if next_page %}
+    <a href="{% url 'profile' %}?page={{ next_page }}">Next</a>
+  {% endif %}
+</div>
+{% endblock body %}
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function updateConfig() {
+  var selectedOption = $("#order-select").val(); // Получаем выбранную опцию
+
+  // Отправляем AJAX запрос на сервер
+  $.ajax({
+    url: "../update_config/", // Путь к вашему представлению Django, обрабатывающему изменение базы данных
+    type: "POST",
+    data: {
+      option: selectedOption, // Передаем выбранную опцию в запросе
+      csrfmiddlewaretoken: "{{ csrf_token }}" // Добавляем CSRF токен для безопасности
+    },
+    success: function(response) {
+      // Обработка успешного ответа от сервера
+      console.log(response);
+    },
+    error: function(xhr, errmsg, err) {
+      // Обработка ошибки
+      console.log(xhr.status + ": " + xhr.responseText);
+    }
+  });
+}
+</script>
+{% endblock script %}

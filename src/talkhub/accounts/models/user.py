@@ -27,7 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "users"
 
     def get_username(self) -> str:
-        username = f"{self.username} - {self.email}"
+        username = f"{self.email}"
         return username.strip()
 
     def age(self) -> Optional[int]:

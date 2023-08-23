@@ -21,6 +21,7 @@ from core.business_logic.exceptions import (
     EmailAlreadyExistsError,
     UsernameAlreadyExistsError,
 )
+from core.models import Config
 
 logger = getLogger(__name__)
 
@@ -69,5 +70,6 @@ def confirm_user_registration(confirmation_code: str) -> None:
     user = code_data.user
     user.is_active = True
     user.save()
+    Config.objects.create(tweets_order="-created_at", user=user)
     Profile.objects.create(user=user)
     code_data.delete()

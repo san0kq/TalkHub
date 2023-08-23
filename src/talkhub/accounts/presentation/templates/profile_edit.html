@@ -1,18 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Sign Up{% endblock title %}
+{% block title %}{{ profile.profile.first_name}} {{ profile.profile.last_name }}{% endblock title %}
 {% block static %}
-<link rel="stylesheet" type="text/css" href="{% static "css/accounts/login.css" %}" type=”image/x-icon”>
+<link rel="stylesheet" type="text/css" href="{% static "css/accounts/profile_edit.css" %}" type=”image/x-icon”>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
 {% endblock static %}
 {% block body %}
-<h1>Log in</h1>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form }}
-    <br>
-    <br>
-    <input type="submit" id="submit" class="button">
+    <input type="submit" class="button">
 </form>
 {% endblock body %}
 {% block script %}

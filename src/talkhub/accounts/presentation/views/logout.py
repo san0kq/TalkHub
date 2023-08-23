@@ -13,4 +13,4 @@ from django.views import View
 class LogoutView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         logout(request=request)
-        return redirect("index")
+        return redirect("signin")

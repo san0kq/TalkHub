@@ -21,7 +21,7 @@
         {% if user.is_authenticated %}
           <div class="avatar">
             <img class="default-image" src="{% static "image/default-avatar.png" %}" alt="AVATAR_ALT">
-            <a href="">Profile</a>
+            <a href="{% url 'profile' %}">Profile</a>
           </div>
         {% else %}
           <ul>
