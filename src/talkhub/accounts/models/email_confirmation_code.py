@@ -11,6 +11,7 @@ class EmailConfirmationCode(BaseModel):
         related_name="email_confirmation_codes",
         related_query_name="email_confirmation_code",
     )
+    expiration = models.PositiveIntegerField()
 
     class Meta:
         verbose_name_plural = "email_confirmation_codes"

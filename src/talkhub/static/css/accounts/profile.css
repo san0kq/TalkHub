@@ -1,0 +1,174 @@
+.profile {
+margin: 2rem auto;
+padding: 1rem;
+text-align: center;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.avatar-main {
+height: 200px;
+width: 200px;
+border-radius: 50%;
+margin-right: 1rem;
+overflow: hidden;
+flex-shrink: 0;
+}
+.img-main {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    }
+.profile-info {
+text-align: left;
+padding-right: 2rem;
+
+}
+.avatar-info {
+    display: flex;
+    flex-direction: row;
+    border-right: 3px solid black;
+    border-left: 3px solid black;
+    padding-left: 30px;
+}
+.tweet-user-info {
+display: flex;
+font-weight: bold;
+margin-bottom: 5px;
+}
+h2 {
+margin-bottom: 0.5rem;
+font-size: 24px;
+}
+p {
+margin-bottom: 0.5rem;
+}
+p:last-child {
+margin-bottom: 0;
+}
+a {
+color: #333;
+text-decoration: none;
+}
+a:hover {
+text-decoration: underline;
+}
+.about-info {
+margin: 0 30rem 0 30rem;
+}
+.tweets {
+max-width: 1500px;
+margin-left: 15rem;
+margin-right: 15rem;
+margin-top: 2rem;
+}
+
+.tweet {
+display: flex;
+align-items: flex-start;
+padding: 10px;
+border-bottom: 1px solid #ccc;
+}
+
+.tweet-avatar {
+width: 80px;
+height: 80px;
+border-radius: 50%;
+overflow: hidden;
+flex-shrink: 0;
+}
+.img-avatar {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.tweet-info {
+display: flex;
+width: 500px;
+flex-grow: 1;
+flex-direction: column;
+justify-content: space-between;
+word-wrap: break-word;
+margin-left: 15px;
+}
+
+.username {
+color: #999;
+}
+
+.publication-date {
+font-size: 12px;
+color: #999;
+align-self: center;
+}
+.tweet-action {
+display: flex;
+justify-content: flex-end;
+}
+.tweet-rating {
+display: flex;
+justify-content: center;
+}
+.tweet-reply {
+display: flex;
+justify-content: center;
+}
+.tweet-retweet {
+display: flex;
+justify-content: center;
+}
+.profile-config {
+    display: flex;
+    padding: 2rem;
+    flex-direction: column;
+}
+.retweet-user-info {
+    font-size: smaller;
+}
+.btn-logout {
+    width: 70px;
+    align-self: center;
+    margin-top: 1rem;
+    border-radius: 5px;
+    background-color: red;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+.profile-edit {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.btn-edit {
+    align-self: center;
+}
+.about {
+    margin-right: 15rem;
+    margin-left: 15rem;
+}
+.tweet-act {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.btn-new-tweet {
+    height: 30px;
+    width: 130px;
+    align-self: flex-end;
+    border-radius: 5px;
+    background-color: #333;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+.follow {
+    display: flex;
+    flex-direction: row;
+}
+.follow-dtl {
+    display: flex;
+    flex-direction: column;
+    margin: 0 30px 0 30px;
+}

@@ -1,0 +1,92 @@
+  h2 {
+    margin-bottom: 0.5rem;
+    font-size: 24px;
+  }
+  p {
+    margin-bottom: 0.5rem;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+  a {
+    color: #333;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  .about-info {
+    margin: 2rem auto;
+    margin-left: 15rem;
+    margin-right: 15rem;
+  }
+  .tweets {
+    max-width: 1500px;
+    margin-left: 15rem;
+    margin-right: 15rem;
+    margin-top: 2rem;
+  }
+  
+  .tweet {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .tweet-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .img-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .tweet-info {
+    display: flex;
+    width: 500px;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    word-wrap: break-word;
+    margin-left: 15px;
+  }
+  
+  .user-info {
+    display: flex;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .username {
+    color: #999;
+  }
+  
+  .publication-date {
+    font-size: 12px;
+    color: #999;
+    align-self: center;
+  }
+  .tweet-action {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .tweet-rating {
+    display: flex;
+    justify-content: center;
+  }
+  .tweet-reply {
+    display: flex;
+    justify-content: center;
+  }
+  .tweet-retweet {
+    display: flex;
+    justify-content: center;
+  }
+  .retweet-user-info {
+    font-size: smaller;
+}

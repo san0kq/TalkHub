@@ -173,3 +173,15 @@ LOGGING = {
         "PIL": {"level": "WARNING", "handlers": ["console_handler"]},
     },
 }
+
+
+CONFIRMATION_CODE_LIFETIME = 3600
+
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_TLS = config("EMAIL_TLS", cast=bool)
+EMAIL_FROM = config("EMAIL_FROM")
+
+SERVER_HOST = config("SERVER_HOST")

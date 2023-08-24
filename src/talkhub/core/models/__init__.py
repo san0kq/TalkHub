@@ -6,5 +6,17 @@ from .retweet import Retweet
 from .tag import Tag
 from .tweet import Tweet
 from .tweet_rating import TweetRating
+from .config import Config
 
-__all__ = ["BaseModel", "Notification", "Rating", "Retweet", "Tag", "TweetRating", "Tweet", "NotificationType"]
+
+__all__ = [
+    "BaseModel",
+    "Notification",
+    "Rating",
+    "Retweet",
+    "Tag",
+    "TweetRating",
+    "Tweet",
+    "NotificationType",
+    "Config",
+]

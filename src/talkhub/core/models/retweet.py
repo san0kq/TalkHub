@@ -16,4 +16,4 @@ class Retweet(BaseModel):
         verbose_name_plural = "retweets"
 
     def __str__(self) -> str:
-        return f"Tweet ID: {self.tweet_id.pk}. User ID: {self.user_id.pk}"
+        return f"Tweet ID: {self.tweet.pk}. User ID: {self.user.pk}"

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="icon" href="{% static "image/logo_min.png" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}" type=”image/x-icon”>
+    {% block static %}{% endblock static %}
+  </head>
+  <body>
+    <nav>
+        <div class="logo">
+          <img src="{% static "image/logo.png" %}" alt="LOGO_ALT">
+        </div>
+        <ul>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li><a href="">Trending in your country</a></li>
+          <li><a href="">Tags</a></li>
+        </ul>
+        {% if user.is_authenticated %}
+          <div class="profile-act">
+            <div class="avatar">
+              {% if user.profile.avatar %}
+                <img class="img-avatar" src="{{ user.profile.avatar.url }}" alt="AVATAR_ALT">
+              {% else %}
+                <img class="img-avatar" src="{% static "image/default-avatar.png" %}" alt="AVATAR_ALT">
+              {% endif %}
+            </div>
+            <a href="{% url 'profile' user.profile.pk %}">Profile</a>
+          </div>
+        {% else %}
+          <ul>
+            <li><a href="{% url 'signin' %}">Log in</a></li>
+            <li><a href="{% url 'signup' %}">Sign up</a></li>
+          </ul>
+        {% endif %}
+        
+    </nav>
+    {% block body %}{% endblock body %}
+  </body>
+  {% block script %}{% endblock script %}
+</html>
