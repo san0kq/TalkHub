@@ -7,7 +7,7 @@ from .base import BaseModel
 class Config(BaseModel):
     tweets_order = models.CharField(max_length=20)
     user = models.OneToOneField(
-        to=get_user_model(), related_name="configs", related_query_name="config", on_delete=models.CASCADE
+        to=get_user_model(), related_name="config", related_query_name="config", on_delete=models.CASCADE
     )
 
     class Meta:

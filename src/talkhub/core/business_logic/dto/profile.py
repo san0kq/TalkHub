@@ -10,8 +10,8 @@ class ProfileEditDTO:
     username: Optional[str]
     first_name: Optional[str]
     last_name: Optional[str]
-    email: Optional[str]
+    email: str
     about: Optional[str]
     country: Optional[str]
-    avatar: Optional[InMemoryUploadedFile]
-    date_of_birth: date
+    avatar: InMemoryUploadedFile | bool | None
+    date_of_birth: Optional[date]

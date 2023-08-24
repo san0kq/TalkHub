@@ -1,22 +1,41 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ profile.profile.first_name}} {{ profile.profile.last_name }}{% endblock title %}
+{% block title %}{{ profile.first_name}} {{ profile.last_name }}{% endblock title %}
 {% block static %}
 <link rel="stylesheet" type="text/css" href="{% static "css/accounts/profile.css" %}" type=”image/x-icon”>
 {% endblock static %}
 {% block body %}
 <div class="profile">
-  <div>
-    <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="avatar-main">
-  </div>
-  <div class="profile-info">
-    <div class="profile-edit">
-      <h2>{{ profile.profile.first_name}} {{ profile.profile.last_name }}</h2>
-      <a href="{% url 'profile_edit' %}" class="btn-edit">&#9997;</a>
+  <div class="follow">
+    <div class="follow-dtl">
+      <h3>Followings</h3>
+      <a href="">{{ profile.followings_count }}</a>
     </div>
-    <p>Username: {{ profile.username }}</p>
-    <p>Email: {{ profile.email }}</p>
-    <p>Registred at: {{ profile.date_joined }}</p>
+    <div class="follow-dtl">
+      <h3>Followers</h3>
+      <a href="">{{ profile.followers_count }}</a>
+    </div>
+  </div>
+  <div class="avatar-info">
+    <div class="avatar-main">
+      {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="avatar-alt" class="img-main">
+      {% else %}
+        <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-main">
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <div class="profile-edit">
+        <h2>{{ profile.first_name}} {{ profile.last_name }}</h2>
+        <a href="{% url 'profile_edit' %}" class="btn-edit">&#9997;</a>
+      </div>
+      <p>Username: {{ profile.user.username }}</p>
+      <p>Email: {{ profile.user.email }}</p>
+      {% if profile.country %}
+        <p>Country: {{ profile.country }}</p>
+      {% endif %}
+      <p>Registred at: {{ profile.user.date_joined }}</p>
+    </div>
   </div>
   <div class="profile-config">
     <h2>Settings</h2>
@@ -35,16 +54,26 @@
     <button type="submit" class="btn-logout" onclick="window.location.href='{% url 'logout' %}'; return false">Logout</button>
   </div>
 </div>
-<h2>About me</h2>
-<p>{{ profile.about }}</p>
+<div class="about">
+  <h2>About me</h2>
+  {% if profile.about %}
+    <p>{{ profile.about }}</p>
+  {% else %}
+    <p>...</p>
+  {% endif %}
+</div>
+
 <hr>
 <div class="tweets" id="tweets">
-  <h2>Tweets</h2>
+  <div class="tweet-act">
+    <h2>Tweets</h2>
+    <button type="submit" class="btn-new-tweet" onclick="window.location.href='{% url 'create_tweet' %}'; return false">New tweet</button>
+  </div>
   {% for tweet in tweets %}
     <div class="tweet">
       <div class="tweet-avatar">
-      {% if 0 %}
-        <img src="" alt="avatar-alt" class="img-avatar">
+      {% if tweet.user.profile.avatar %}
+        <img src="{{ tweet.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
       {% else %}
         <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
       {% endif %}

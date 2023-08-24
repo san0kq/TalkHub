@@ -6,6 +6,7 @@ from django.db.models import BooleanField, Count, Value
 
 if TYPE_CHECKING:
     from accounts.models import User
+    from core.business_logic.dto import CreateTweetDTO
 
 from core.models import Config, Tweet
 
@@ -27,3 +28,7 @@ def get_tweets(user: User) -> list[Tweet]:
     tweets = tweets.union(retweets, all=True).order_by(order_by)
 
     return list(tweets)
+
+
+def create_tweet(data: CreateTweetDTO, user: User) -> None:
+    Tweet.objects.create(text=data.text, user=user)

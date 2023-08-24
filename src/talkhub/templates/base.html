@@ -19,9 +19,15 @@
           <li><a href="">Tags</a></li>
         </ul>
         {% if user.is_authenticated %}
-          <div class="avatar">
-            <img class="default-image" src="{% static "image/default-avatar.png" %}" alt="AVATAR_ALT">
-            <a href="{% url 'profile' %}">Profile</a>
+          <div class="profile-act">
+            <div class="avatar">
+              {% if user.profile.avatar %}
+                <img class="img-avatar" src="{{ user.profile.avatar.url }}" alt="AVATAR_ALT">
+              {% else %}
+                <img class="img-avatar" src="{% static "image/default-avatar.png" %}" alt="AVATAR_ALT">
+              {% endif %}
+            </div>
+            <a href="{% url 'profile' user.profile.pk %}">Profile</a>
           </div>
         {% else %}
           <ul>

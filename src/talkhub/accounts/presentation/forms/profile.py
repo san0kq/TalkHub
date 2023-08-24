@@ -6,10 +6,10 @@ COUNTRIES = [(country.name, country.name) for country in Country.objects.all()]
 
 
 class ProfileEditForm(forms.Form):
-    username = forms.CharField(label="Username", max_length=150, required=False)
-    first_name = forms.CharField(label="First name", max_length=150, required=False)
-    last_name = forms.CharField(label="Last name", max_length=150, required=False)
-    email = forms.EmailField(label="Email", max_length=254, required=False)
+    username = forms.CharField(label="Username", max_length=150)
+    first_name = forms.CharField(label="First name", max_length=150)
+    last_name = forms.CharField(label="Last name", max_length=150)
+    email = forms.EmailField(label="Email", max_length=254)
     about = forms.CharField(label="About me", max_length=400, widget=forms.Textarea, required=False)
     country = forms.ChoiceField(label="Country", choices=COUNTRIES, required=False)
     avatar = forms.ImageField(

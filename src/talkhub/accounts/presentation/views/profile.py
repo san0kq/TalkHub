@@ -6,6 +6,7 @@ from django.http import HttpResponseBadRequest
 
 if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
+    from uuid import UUID
 
 from accounts.presentation.forms import ProfileEditForm
 from core.business_logic.dto import ProfileEditDTO
@@ -21,15 +22,13 @@ from django.views import View
 class ProfileView(LoginRequiredMixin, View):
     login_url = "signin"
 
-    def get(self, request: HttpRequest) -> HttpResponse:
-        user = request.user
-
+    def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
         try:
             page_number = request.GET["page"]
         except KeyError:
             page_number = 1
 
-        profile, profile_tweets = get_profile(user=user)
+        profile, profile_tweets = get_profile(profile_uuid=profile_uuid)
 
         paginator = Paginator(profile_tweets, 20)
 
@@ -85,7 +84,7 @@ class ProfileEditView(LoginRequiredMixin, View):
                 context = {"form": form, "error_message": error_message}
                 return render(request, "profile_edit.html", context=context)
 
-            return redirect("profile")
+            return redirect("profile", profile_uuid=user.profile.pk)
 
         else:
             context = {"form": form}

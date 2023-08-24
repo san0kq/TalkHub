@@ -17,7 +17,7 @@ from core.business_logic.exceptions import (
     EmailAlreadyExistsError,
     UsernameAlreadyExistsError,
 )
-from core.business_logic.services import confirm_user_registration, create_user
+from core.business_logic.services import confirm_user_email, create_user
 from core.presentation.converters import convert_data_from_form_to_dto
 
 
@@ -50,14 +50,18 @@ class RegistrationView(View):
             return render(request, "registration.html", {"form": form})
 
 
-class RegistrationConfirmationView(View):
+class ConfirmEmailView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         confirmation_code = request.GET["code"]
+        email = request.GET["email"]
         try:
-            confirm_user_registration(confirmation_code=confirmation_code)
+            confirm_user_email(confirmation_code=confirmation_code, email=email)
         except ConfirmationCodeNotExists:
             return HttpResponseBadRequest(content="Invalid confirmation code.")
         except ConfirmationCodeExpired:
             return HttpResponseBadRequest(content="Confirmation code expired.")
 
-        return redirect(to="login")
+        if request.user:
+            return redirect(to="profile")
+        else:
+            return redirect(to="login")

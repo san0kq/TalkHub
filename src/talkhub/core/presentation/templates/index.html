@@ -11,8 +11,8 @@
     {% for tweet in tweets %}
       <div class="tweet">
         <div class="tweet-avatar">
-        {% if 0 %}
-          <img src="" alt="avatar-alt" class="img-avatar">
+        {% if tweet.user.profile.avatar %}
+          <img src="{{ tweet.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
         {% else %}
           <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
         {% endif %}
