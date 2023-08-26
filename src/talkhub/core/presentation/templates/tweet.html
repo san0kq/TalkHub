@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ tweet.text }}{% endblock title %}
+{% block static %}
+<link rel="stylesheet" type="text/css" href="{% static "css/core/tweet.css" %}" type=”image/x-icon”>
+{% endblock static %}
+{% block body %}
+<div class="tweets" id="tweets">
+    <hr>
+    <div class="tweet">
+        <div class="tweet-avatar" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
+            {% if tweet.user.profile.avatar %}
+                <img src="{{ tweet.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
+            {% else %}
+                <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
+            {% endif %}
+        </div>
+        <div class="tweet-info">
+            <div class="user-info">
+                <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
+                <div class="username" id="username">@{{ tweet.user.username }}</div>
+            </div>
+        
+            <p class="tweet-text" id="tweet-text">{{ tweet.text }}</p>
+            <div class="tweet-action">
+                <div class="tweet-rating">
+                    <button class="like" id="like">&#10084;</button>
+                    <div class="like-count" id="like-count">{{ tweet.rating_count }}</div>
+                </div>
+                <div class="tweet-reply">
+                    <button class="reply" id="reply">&#128101;</button>
+                    <div class="reply-count" id="reply-count">{{ tweet.reply_count }}</div>
+                </div>
+                <div class="tweet-retweet">
+                    <button class="retweet" id="retweet">&#128257;</button>
+                    <div class="retweet-count" id="retweet-count">{{ tweet.retweet_count }}</div>
+                </div>
+                <div class="publication-date">{{ tweet.created_at }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="tweets" id="tweets">
+        <hr>
+        {% for tweet in reply_tweets %}
+            <div class="tweet">
+                <div class="tweet-avatar" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
+                    {% if tweet.user.profile.avatar %}
+                        <img src="{{ tweet.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
+                    {% else %}
+                        <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
+                    {% endif %}
+                </div>
+                <div class="tweet-info">
+                    <div class="user-info">
+                        <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
+                        <div class="username" id="username">@{{ tweet.user.username }}</div>
+                    </div>
+                
+                    <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text }}</p>
+                    <div class="tweet-action">
+                        <div class="tweet-rating">
+                            <button class="like" id="like">&#10084;</button>
+                            <div class="like-count" id="like-count">{{ tweet.rating_count }}</div>
+                        </div>
+                        <div class="tweet-reply">
+                            <button class="reply" id="reply">&#128101;</button>
+                            <div class="reply-count" id="reply-count">{{ tweet.reply_count }}</div>
+                        </div>
+                        <div class="tweet-retweet">
+                            <button class="retweet" id="retweet">&#128257;</button>
+                            <div class="retweet-count" id="retweet-count">{{ tweet.retweet_count }}</div>
+                        </div>
+                        <div class="publication-date">{{ tweet.created_at }}</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% if prev_page %}
+        <a href="{% url 'index' %}?page={{ prev_page }}">Prev</a>
+        {% endif %}
+        {% if next_page %}
+        <a href="{% url 'index' %}?page={{ next_page }}">Next</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock body %}

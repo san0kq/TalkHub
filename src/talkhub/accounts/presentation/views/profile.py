@@ -9,9 +9,15 @@ if TYPE_CHECKING:
     from uuid import UUID
 
 from accounts.presentation.forms import ProfileEditForm
-from core.business_logic.dto import ProfileEditDTO
+from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO
 from core.business_logic.exceptions import EmailAlreadyExistsError, UsernameAlreadyExistsError
-from core.business_logic.services import get_profile, initial_profile_form, profile_edit
+from core.business_logic.services import (
+    get_profile,
+    initial_profile_form,
+    profile_edit,
+    profile_follow,
+    profile_unfollow,
+)
 from core.presentation.converters import convert_data_from_form_to_dto
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import EmptyPage, Paginator
@@ -89,3 +95,17 @@ class ProfileEditView(LoginRequiredMixin, View):
         else:
             context = {"form": form}
             return render(request, "profile_edit.html", context=context)
+
+
+class FollowProfileView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
+        data = ProfileFollowDTO(user=request.user, profile_uuid=profile_uuid)
+        profile_follow(data=data)
+        return redirect("profile", profile_uuid=profile_uuid)
+
+
+class UnfollowProfileView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
+        data = ProfileFollowDTO(user=request.user, profile_uuid=profile_uuid)
+        profile_unfollow(data=data)
+        return redirect("profile", profile_uuid=profile_uuid)

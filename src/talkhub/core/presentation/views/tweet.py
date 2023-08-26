@@ -10,9 +10,10 @@ from django.views import View
 
 if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
+    from uuid import UUID
 
 from core.business_logic.dto import CreateTweetDTO
-from core.business_logic.services import create_tweet, get_tweets
+from core.business_logic.services import create_tweet, get_tweet_by_uuid, get_tweets
 from core.presentation.converters import convert_data_from_form_to_dto
 from core.presentation.forms import CreateTweetForm
 
@@ -62,7 +63,14 @@ class CreateTweet(LoginRequiredMixin, View):
             user = request.user
             data = convert_data_from_form_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
             create_tweet(data=data, user=user)
-            return redirect("profile")
+            return redirect("profile", profile_uuid=user.profile.pk)
         else:
             context = {"form": form}
             return render(request, "create_tweet.html", context=context)
+
+
+class TweetView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
+        tweet, reply_tweets = get_tweet_by_uuid(tweet_uuid=tweet_uuid)
+        context = {"tweet": tweet, "reply_tweets": reply_tweets}
+        return render(request, "tweet.html", context=context)

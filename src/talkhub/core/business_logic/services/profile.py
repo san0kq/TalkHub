@@ -6,7 +6,7 @@ from django.db import transaction
 from django.db.models import BooleanField, Count, Value
 
 if TYPE_CHECKING:
-    from core.business_logic.dto import ProfileEditDTO
+    from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO
     from uuid import UUID
 
 from accounts.models import Country, Profile, User
@@ -36,7 +36,7 @@ def get_profile(profile_uuid: UUID) -> tuple[Profile, list[Tweet]]:
         reply_count=Count("tweet__tweet"),
         is_retweet=Value(True, BooleanField()),
     )
-    all_tweets = profile_tweets.union(retweeted_tweets).order_by(profile.user.config.tweets_order)
+    all_tweets = profile_tweets.union(retweeted_tweets).order_by("-created_at")
     return profile, list(all_tweets)
 
 
@@ -95,3 +95,15 @@ def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
 
         user.save()
         profile.save()
+
+
+def profile_follow(data: ProfileFollowDTO) -> None:
+    profile = Profile.objects.get(pk=data.user.profile.pk)
+    profile_following = Profile.objects.get(pk=data.profile_uuid)
+    profile.followings.add(profile_following)
+
+
+def profile_unfollow(data: ProfileFollowDTO) -> None:
+    profile = Profile.objects.get(pk=data.user.profile.pk)
+    profile_following = Profile.objects.get(pk=data.profile_uuid)
+    profile.followings.remove(profile_following)

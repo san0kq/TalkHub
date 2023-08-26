@@ -10,7 +10,7 @@
     <h2>Tweets</h2>
     {% for tweet in tweets %}
       <div class="tweet">
-        <div class="tweet-avatar">
+        <div class="tweet-avatar" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
         {% if tweet.user.profile.avatar %}
           <img src="{{ tweet.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
         {% else %}
@@ -20,13 +20,15 @@
         <div class="tweet-info">
           {% if tweet.is_retweet %}
             <div class="retweet-user-info">{{ tweet.retweets.first.user.profile.first_name }} {{ tweet.retweets.first.user.profile.last_name }} retweeted this at {{ tweet.retweets.first.created_at }}</div>
+          {% elif tweet.parent_tweet %}
+            <div class="retweet-user-info" onclick="window.location.href='{% url 'tweet' tweet.parent_tweet.pk %}'; return false">reply to {{ tweet.parent_tweet.user.profile.first_name }} {{ tweet.parent_tweet.user.profile.last_name }} tweet</div>
           {% endif %}
           <div class="user-info">
             <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
             <div class="username" id="username">@{{ tweet.user.username }}</div>
           </div>
           
-          <p class="tweet-text" id="tweet-text">{{ tweet.text }}</p>
+          <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text }}</p>
           <div class="tweet-action">
             <div class="tweet-rating">
               <button class="like" id="like">&#10084;</button>
