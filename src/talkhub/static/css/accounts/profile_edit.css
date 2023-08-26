@@ -3,28 +3,28 @@ form {
     max-width: 600px;
 }
 form div {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 form label {
-  display: block;
-  margin-bottom: 0.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
 }
 form input,
 form select {
-  font-size: 1rem;
-  padding: 0.5rem;
+    font-size: 1rem;
+    padding: 0.5rem;
 }
 form .button {
-  background: #333;
-  border: none;
-  color: #fff;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
+    background: #333;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
 }
 form .button:hover {
-  background: #555;
+    background: #555;
 }
 h1 {
-  margin-bottom: 0;
-  text-align: center;
+    margin-bottom: 0;
+    text-align: center;
 }

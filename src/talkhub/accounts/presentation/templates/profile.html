@@ -37,22 +37,30 @@
       <p>Registred at: {{ profile.user.date_joined }}</p>
     </div>
   </div>
-  <div class="profile-config">
-    <h2>Settings</h2>
-    <div class="order-config">
-      Order of displaying tweets on the main page:
-      <select class="order-select" id="order-select" onchange="updateConfig()">
-        {% if profile.configs.tweets_order == "-created_at" %}
-          <option selected>Date of published</option>
-          <option>Ratings count</option>
-        {% else %}
-          <option>Date of published</option>
-          <option selected>Ratings count</option>
-        {% endif %}
-      </select>
+  {% if user == profile.user %}
+    <div class="profile-config">
+      <h2>Settings</h2>
+      <div class="order-config">
+        Order of displaying tweets on the main page:
+        <select class="order-select" id="order-select" onchange="updateConfig()">
+          {% if profile.configs.tweets_order == "-created_at" %}
+            <option selected>Date of published</option>
+            <option>Ratings count</option>
+          {% else %}
+            <option>Date of published</option>
+            <option selected>Ratings count</option>
+          {% endif %}
+        </select>
+      </div>
+      <button type="submit" class="btn-logout" onclick="window.location.href='{% url 'logout' %}'; return false">Logout</button>
     </div>
-    <button type="submit" class="btn-logout" onclick="window.location.href='{% url 'logout' %}'; return false">Logout</button>
-  </div>
+  {% else %}
+    {% if profile in user.profile.followings.all %}
+      <button type="reset" class="btn-unfollow" onclick="window.location.href='{% url 'profile_unfollow' profile.pk %}'; return false">Unfollow</button>
+    {% else %}
+      <button type="submit" class="btn-follow" onclick="window.location.href='{% url 'profile_follow' profile.pk %}'; return false">Follow</button>
+    {% endif %}
+  {% endif %}
 </div>
 <div class="about">
   <h2>About me</h2>
@@ -71,7 +79,7 @@
   </div>
   {% for tweet in tweets %}
     <div class="tweet">
-      <div class="tweet-avatar">
+      <div class="tweet-avatar" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
       {% if tweet.user.profile.avatar %}
         <img src="{{ tweet.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
       {% else %}
@@ -81,13 +89,15 @@
       <div class="tweet-info">
         {% if tweet.is_retweet %}
           <div class="retweet-user-info">{{ tweet.retweets.first.user.profile.first_name }} {{ tweet.retweets.first.user.profile.last_name }} retweeted this at {{ tweet.retweets.first.created_at }}</div>
+        {% elif tweet.parent_tweet %}
+          <div class="retweet-user-info" onclick="window.location.href='{% url 'tweet' tweet.parent_tweet.pk %}'; return false">reply to {{ tweet.parent_tweet.user.profile.first_name }} {{ tweet.parent_tweet.user.profile.last_name }} tweet</div>
         {% endif %}
         <div class="tweet-user-info">
           <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
           <div class="username" id="username">@{{ tweet.user.username }}</div>
         </div>
         
-        <p class="tweet-text" id="tweet-text">{{ tweet.text }}</p>
+        <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text }}</p>
         <div class="tweet-action">
           <div class="tweet-rating">
             <button class="like" id="like">&#10084;</button>
