@@ -16,3 +16,11 @@ class EmailAlreadyExistsError(Exception):
 
 class UsernameAlreadyExistsError(Exception):
     pass
+
+
+class TagsError(Exception):
+    pass
+
+
+class PageDoesNotExists(Exception):
+    pass

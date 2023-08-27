@@ -10,17 +10,17 @@ if TYPE_CHECKING:
 
 from accounts.presentation.forms import ProfileEditForm
 from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO
-from core.business_logic.exceptions import EmailAlreadyExistsError, UsernameAlreadyExistsError
+from core.business_logic.exceptions import EmailAlreadyExistsError, PageDoesNotExists, UsernameAlreadyExistsError
 from core.business_logic.services import (
     get_profile,
     initial_profile_form,
+    paginate_pages,
     profile_edit,
     profile_follow,
     profile_unfollow,
 )
 from core.presentation.converters import convert_data_from_form_to_dto
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import EmptyPage, Paginator
 from django.shortcuts import redirect, render
 from django.views import View
 
@@ -29,30 +29,13 @@ class ProfileView(LoginRequiredMixin, View):
     login_url = "signin"
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
-        try:
-            page_number = request.GET["page"]
-        except KeyError:
-            page_number = 1
-
         profile, profile_tweets = get_profile(profile_uuid=profile_uuid)
 
-        paginator = Paginator(profile_tweets, 20)
-
         try:
-            tweets_paginated = paginator.page(page_number)
+            tweets_paginated, prev_page, next_page = paginate_pages(request=request, data=profile_tweets, per_page=20)
 
-        except EmptyPage:
-            return HttpResponseBadRequest("Page with provided number doesn't exist.")
-
-        if tweets_paginated.has_next():
-            next_page = tweets_paginated.next_page_number()
-        else:
-            next_page = None
-
-        if tweets_paginated.has_previous():
-            prev_page = tweets_paginated.previous_page_number()
-        else:
-            prev_page = None
+        except PageDoesNotExists as err:
+            return HttpResponseBadRequest(content=err)
 
         context = {"profile": profile, "tweets": tweets_paginated, "next_page": next_page, "prev_page": prev_page}
 

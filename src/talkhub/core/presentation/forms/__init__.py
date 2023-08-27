@@ -1,4 +1,5 @@
-from .create_tweet import CreateTweetForm
+from .tweet import CreateTweetForm
+from .tag import SearchTagForm
 
 
-__all__ = ["CreateTweetForm"]
+__all__ = ["CreateTweetForm", "SearchTagForm"]

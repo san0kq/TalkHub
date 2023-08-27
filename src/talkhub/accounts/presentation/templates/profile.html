@@ -43,7 +43,7 @@
       <div class="order-config">
         Order of displaying tweets on the main page:
         <select class="order-select" id="order-select" onchange="updateConfig()">
-          {% if profile.configs.tweets_order == "-created_at" %}
+          {% if profile.user.config.tweets_order == "-created_at" %}
             <option selected>Date of published</option>
             <option>Ratings count</option>
           {% else %}
@@ -88,27 +88,31 @@
       </div>
       <div class="tweet-info">
         {% if tweet.is_retweet %}
-          <div class="retweet-user-info">{{ tweet.retweets.first.user.profile.first_name }} {{ tweet.retweets.first.user.profile.last_name }} retweeted this at {{ tweet.retweets.first.created_at }}</div>
+          <div class="retweet-user-info" onclick="window.location.href='{% url 'profile' tweet.retweets.first.user.profile.pk %}'; return false">{{ tweet.retweets.first.user.profile.first_name }} {{ tweet.retweets.first.user.profile.last_name }} retweeted this at {{ tweet.retweets.first.created_at }}</div>
         {% elif tweet.parent_tweet %}
           <div class="retweet-user-info" onclick="window.location.href='{% url 'tweet' tweet.parent_tweet.pk %}'; return false">reply to {{ tweet.parent_tweet.user.profile.first_name }} {{ tweet.parent_tweet.user.profile.last_name }} tweet</div>
         {% endif %}
-        <div class="tweet-user-info">
+        <div class="tweet-user-info" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
           <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
           <div class="username" id="username">@{{ tweet.user.username }}</div>
         </div>
         
-        <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text }}</p>
+        <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text|urlize|safe }}</p>
         <div class="tweet-action">
           <div class="tweet-rating">
-            <button class="like" id="like">&#10084;</button>
+            {% if tweet.user == user %}
+              <button class="self-like" id="like">&#10084;</button>
+            {% else %}
+              <button class="like" id="like" onclick="window.location.href='{% url 'tweet_like' tweet.pk %}'; return false">&#10084;</button>
+            {% endif %}
             <div class="like-count" id="like-count">{{ tweet.rating_count }}</div>
           </div>
           <div class="tweet-reply">
-            <button class="reply" id="reply">&#128101;</button>
+            <button class="reply" id="reply" onclick="window.location.href='{% url 'tweet_reply' tweet.pk %}'; return false">&#128101;</button>
             <div class="reply-count" id="reply-count">{{ tweet.reply_count }}</div>
           </div>
           <div class="tweet-retweet">
-            <button class="retweet" id="retweet">&#128257;</button>
+            <button class="retweet" id="retweet" onclick="window.location.href='{% url 'retweet' tweet.pk %}'; return false">&#128257;</button>
             <div class="retweet-count" id="retweet-count">{{ tweet.retweet_count }}</div>
           </div>
           <div class="publication-date">{{ tweet.created_at }}</div>
@@ -117,10 +121,10 @@
     </div>
   {% endfor %}
   {% if prev_page %}
-    <a href="{% url 'profile' %}?page={{ prev_page }}">Prev</a>
+    <a href="{% url 'profile' profile.pk %}?page={{ prev_page }}">Prev</a>
   {% endif %}
   {% if next_page %}
-    <a href="{% url 'profile' %}?page={{ next_page }}">Next</a>
+    <a href="{% url 'profile' profile.pk %}?page={{ next_page }}">Next</a>
   {% endif %}
 </div>
 {% endblock body %}

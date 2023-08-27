@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Sign Up{% endblock title %}
+{% block title %}Trending{% endblock title %}
 {% block static %}
-<link rel="stylesheet" type="text/css" href="{% static "css/accounts/login.css" %}" type=”image/x-icon”>
+<link rel="stylesheet" type="text/css" href="{% static "css/core/trending.css" %}" type=”image/x-icon”>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
 {% endblock static %}
 {% block body %}
-<h1>Log in</h1>
-<form method="POST">
-    {% csrf_token %}
-    {{ form }}
-    <br>
-    <br>
-    <input type="submit" id="submit" class="button" value="Send">
-</form>
+<h1>Popular tags for the last 24 hours. Country: {{ user.profile.country.name }}.</h1>
+<table>
+{% for tag in tags %}
+    <tr>
+    <th onclick="window.location.href='{% url 'tags' %}?name={{ tag.name }}'; return false">{{ tag.name }}</th>
+    <td>{{ tag.count }}</td>
+    </tr>
+{% endfor %}
+</table>
 {% endblock body %}
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>

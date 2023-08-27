@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Home{% endblock title %}
+{% block title %}Tag{% endblock title %}
 {% block static %}
-<link rel="stylesheet" type="text/css" href="{% static "css/core/index.css" %}" type=”image/x-icon”>
+<link rel="stylesheet" type="text/css" href="{% static "css/core/tag.css" %}" type=”image/x-icon”>
 {% endblock static %}
 {% block body %}
+<form method="GET">
+    {{ form }}
+    <input type="submit" class="button" value="Send">
+</form>
 <div class="tweets" id="tweets">
     <hr>
     <h2>Tweets</h2>
@@ -52,10 +56,10 @@
       </div>
     {% endfor %}
     {% if prev_page %}
-      <a href="{% url 'index' %}?page={{ prev_page }}">Prev</a>
+      <a href="{% url 'tags' %}?name={{ tag_name }}&page={{ prev_page }}">Prev</a>
     {% endif %}
     {% if next_page %}
-      <a href="{% url 'index' %}?page={{ next_page }}">Next</a>
+      <a href="{% url 'tags' %}?name={{ tag_name }}&page={{ next_page }}">Next</a>
     {% endif %}
 </div>
 {% endblock body %}

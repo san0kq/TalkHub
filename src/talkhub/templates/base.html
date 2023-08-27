@@ -15,8 +15,8 @@
         </div>
         <ul>
           <li><a href="{% url 'index' %}">Home</a></li>
-          <li><a href="">Trending in your country</a></li>
-          <li><a href="">Tags</a></li>
+          <li><a href="{% url 'trending' %}">Trending in your country</a></li>
+          <li><a href="{% url 'tags' %}">Tags</a></li>
         </ul>
         {% if user.is_authenticated %}
           <div class="profile-act">

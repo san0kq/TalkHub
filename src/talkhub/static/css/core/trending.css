@@ -1,0 +1,30 @@
+table {
+    border-collapse: collapse;
+    margin: 5rem auto;
+}
+table th,
+table td {
+  padding: 1rem;
+  text-align: left;
+}
+table th {
+  background: silver;
+  color: black;
+}
+table td:first-child {
+  font-weight: bold;
+}
+table tbody tr:nth-child(odd) {
+  background: #f0f0f0;
+}
+th {
+  cursor: pointer;
+}
+tr th:hover {
+    background: #333;
+    color: #f0f0f0;
+}
+h1 {
+    text-align: center;
+    font-size: larger;
+}
