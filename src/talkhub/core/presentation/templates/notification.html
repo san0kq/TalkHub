@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Notifications{% endblock title %}
+{% block static %}
+<link rel="stylesheet" type="text/css" href="{% static "css/core/notification.css" %}" type=”image/x-icon”>
+{% endblock static %}
+{% block body %}
+<div class="notifications" id="notifications">
+    <h1>Notifications</h1>
+  {% for notification in notifications %}
+    <div class="notification">
+        {% if notification.notification_type.name == "admin" %}
+            <div class="notification-type-admin">
+                @admin
+            </div>
+            <div class="notification-info">
+                <div class="info">
+                    <div class="icon">&#128276;</div>
+                    <div class="notification-text">
+                        {{ notification.text }}
+                    </div>
+                </div>
+                <div class="pub-date">{{ notification.created_at }}</div>
+            </div>
+        {% elif notification.notification_type.name == "rating" %}
+            <div class="notification-type-rating">
+            </div>
+            
+            <div class="notification-info">
+                <div class="info">
+                    <div class="icon">&#128276;</div>
+                    <div class="fullname" onclick="window.location.href='{% url 'profile' notification.user.profile.pk %}'; return false">{{ notification.user.profile.first_name}} {{ notification.user.profile.last_name}}</div> 
+                    <div class="username" onclick="window.location.href='{% url 'profile' notification.user.profile.pk %}'; return false">@{{ notification.user.username }}</div> 
+                    <div class="notification-text">liked your tweet</div>
+                    <div class="tweet-text" onclick="window.location.href='{% url 'tweet' notification.tweet.pk %}'; return false">{{ notification.tweet.text }}</div>
+                </div>
+                <div class="pub-date">{{ notification.created_at }}</div>
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+  {% if prev_page %}
+    <a href="{% url 'profile' profile.pk %}?page={{ prev_page }}">Prev</a>
+  {% endif %}
+  {% if next_page %}
+    <a href="{% url 'profile' profile.pk %}?page={{ next_page }}">Next</a>
+  {% endif %}
+</div>
+{% endblock body %}

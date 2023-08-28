@@ -108,3 +108,13 @@ def profile_unfollow(data: ProfileFollowDTO) -> None:
     profile = Profile.objects.get(pk=data.user.profile.pk)
     profile_following = Profile.objects.get(pk=data.profile_uuid)
     profile.followings.remove(profile_following)
+
+
+def profile_followings(profile_uuid: UUID) -> list[Profile | None]:
+    followings = Profile.objects.prefetch_related("followings").get(pk=profile_uuid).followings.all()
+    return list(followings)
+
+
+def profile_followers(profile_uuid: UUID) -> list[Profile | None]:
+    followers = Profile.objects.prefetch_related("followings").get(pk=profile_uuid).followers.all()
+    return list(followers)

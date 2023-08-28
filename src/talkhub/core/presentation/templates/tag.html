@@ -27,9 +27,17 @@
           {% elif tweet.parent_tweet %}
             <div class="retweet-user-info" onclick="window.location.href='{% url 'tweet' tweet.parent_tweet.pk %}'; return false">reply to {{ tweet.parent_tweet.user.profile.first_name }} {{ tweet.parent_tweet.user.profile.last_name }} tweet</div>
           {% endif %}
-          <div class="user-info" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
-            <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
-            <div class="username" id="username">@{{ tweet.user.username }}</div>
+          <div class="user-info">
+            <div class="user-click" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
+              <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
+              <div class="username" id="username">@{{ tweet.user.username }}</div>
+            </div>
+            {% if tweet.user == user %}
+              <div class="tweet-crud">
+                <button class="tweet-edit" onclick="window.location.href='{% url 'update_tweet' tweet.pk %}'; return false">&#9998;</button>
+                <button class="tweet-delete" onclick="window.location.href='{% url 'delete_tweet' tweet.pk %}'; return false">&#10006;</button>
+              </div>
+            {% endif %}
           </div>
           
           <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text|urlize|safe }}</p>

@@ -24,3 +24,11 @@ class TagsError(Exception):
 
 class PageDoesNotExists(Exception):
     pass
+
+
+class AccessDeniedError(Exception):
+    pass
+
+
+class TweetDoesNotExists(Exception):
+    pass

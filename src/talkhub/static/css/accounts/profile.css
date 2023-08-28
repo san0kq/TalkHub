@@ -33,9 +33,9 @@
 }
 .tweet-user-info {
     display: flex;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 5px;
-    cursor: pointer;
 }
 .tweet-text {
     cursor: pointer;
@@ -99,9 +99,16 @@ a:hover {
     word-wrap: break-word;
     margin-left: 15px;
 }
+.user-click {
+    cursor: pointer;
+}
+.fullname {
+    display: inline-block;
+}
 
 .username {
     color: #999;
+    display: inline-block;
 }
 
 .publication-date {
@@ -224,4 +231,16 @@ a:hover {
 }
 .tweet-text a:hover {
     color: blue;
+}
+.tweet-edit, .tweet-delete{
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: transparent;
+}
+.tweet-delete:hover{
+    color: red;
+}
+.tweet-edit:hover{
+    color: black;
 }

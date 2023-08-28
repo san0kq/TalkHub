@@ -41,12 +41,19 @@
 }  
 .user-info {
     display: flex;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 5px;
+}
+.user-click {
     cursor: pointer;
+}
+.fullname {
+    display: inline-block;
 }
 .username {
     color: #999;
+    display: inline-block;
 }  
 .publication-date {
     font-size: 12px;
@@ -97,4 +104,16 @@
 }
 .tweet-text a:hover {
     color: blue;
+}
+.tweet-edit, .tweet-delete{
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: transparent;
+}
+.tweet-delete:hover{
+    color: red;
+}
+.tweet-edit:hover{
+    color: black;
 }

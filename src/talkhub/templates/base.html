@@ -10,7 +10,7 @@
   </head>
   <body>
     <nav>
-        <div class="logo">
+        <div class="logo" onclick="window.location.href='{% url 'index' %}'; return false">
           <img src="{% static "image/logo.png" %}" alt="LOGO_ALT">
         </div>
         <ul>
@@ -20,7 +20,7 @@
         </ul>
         {% if user.is_authenticated %}
           <div class="profile-act">
-            <div class="avatar">
+            <div class="avatar" onclick="window.location.href='{% url 'profile' user.profile.pk %}'; return false">
               {% if user.profile.avatar %}
                 <img class="img-avatar" src="{{ user.profile.avatar.url }}" alt="AVATAR_ALT">
               {% else %}
@@ -28,6 +28,7 @@
               {% endif %}
             </div>
             <a href="{% url 'profile' user.profile.pk %}">Profile</a>
+            <button class="notificate" onclick="window.location.href='{% url 'notification' %}'; return false">&#128276;</button>
           </div>
         {% else %}
           <ul>

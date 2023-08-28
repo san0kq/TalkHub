@@ -12,15 +12,18 @@ if TYPE_CHECKING:
     from uuid import UUID
 
 from core.business_logic.dto import CreateTweetDTO
-from core.business_logic.exceptions import PageDoesNotExists, TagsError
+from core.business_logic.exceptions import AccessDeniedError, PageDoesNotExists, TagsError, TweetDoesNotExists
 from core.business_logic.services import (
     create_reply,
     create_retweet,
     create_tweet,
+    delete_tweet,
     get_tweet_by_uuid,
     get_tweets,
+    initial_tweet_form,
     paginate_pages,
     tweet_like,
+    update_tweet,
 )
 from core.presentation.converters import convert_data_from_form_to_dto
 from core.presentation.forms import CreateTweetForm
@@ -67,7 +70,11 @@ class CreateTweet(LoginRequiredMixin, View):
 
 class TweetView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
-        tweet, reply_tweets = get_tweet_by_uuid(tweet_uuid=tweet_uuid)
+        try:
+            tweet, reply_tweets = get_tweet_by_uuid(tweet_uuid=tweet_uuid)
+        except TweetDoesNotExists:
+            return redirect("index")
+
         try:
             reply_tweets_paginated, prev_page, next_page = paginate_pages(request, reply_tweets, per_page=20)
 
@@ -115,3 +122,46 @@ class RetweetView(LoginRequiredMixin, View):
         user = request.user
         create_retweet(user=user, tweet_uuid=tweet_uuid)
         return redirect("profile", profile_uuid=user.profile.pk)
+
+
+class UpdateTweetView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
+        initial = initial_tweet_form(tweet_uuid=tweet_uuid)
+        form = CreateTweetForm(initial=initial)
+        context = {"form": form}
+        return render(request, "update_tweet.html", context=context)
+
+    def post(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
+        form = CreateTweetForm(request.POST)
+        if form.is_valid():
+            data = convert_data_from_form_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
+            error_message: AccessDeniedError | TagsError | None = None
+            try:
+                update_tweet(data=data, tweet_uuid=tweet_uuid, user=request.user)
+
+            except AccessDeniedError as err:
+                error_message = err
+                context = {"form": form, "error_message": error_message}
+                return render(request, "update_tweet.html", context=context)
+
+            except TagsError as err:
+                error_message = err
+                context = {"form": form, "error_message": error_message}
+                return render(request, "update_tweet.html", context=context)
+
+            return redirect("profile", profile_uuid=request.user.profile.pk)
+
+        else:
+            context = {"form": form}
+            return render(request, "update_tweet.html", context=context)
+
+
+class DeleteTweetView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
+        try:
+            delete_tweet(tweet_uuid=tweet_uuid, user=request.user)
+        except AccessDeniedError:
+            return redirect("index")
+
+        current_page = request.META.get("HTTP_REFERER")
+        return redirect(current_page)

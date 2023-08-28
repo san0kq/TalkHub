@@ -9,11 +9,11 @@
   <div class="follow">
     <div class="follow-dtl">
       <h3>Followings</h3>
-      <a href="">{{ profile.followings_count }}</a>
+      <a href="{% url 'profile_followings' profile.pk %}">{{ profile.followings_count }}</a>
     </div>
     <div class="follow-dtl">
       <h3>Followers</h3>
-      <a href="">{{ profile.followers_count }}</a>
+      <a href="{% url 'profile_followers' profile.pk %}">{{ profile.followers_count }}</a>
     </div>
   </div>
   <div class="avatar-info">
@@ -92,9 +92,17 @@
         {% elif tweet.parent_tweet %}
           <div class="retweet-user-info" onclick="window.location.href='{% url 'tweet' tweet.parent_tweet.pk %}'; return false">reply to {{ tweet.parent_tweet.user.profile.first_name }} {{ tweet.parent_tweet.user.profile.last_name }} tweet</div>
         {% endif %}
-        <div class="tweet-user-info" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
-          <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
-          <div class="username" id="username">@{{ tweet.user.username }}</div>
+        <div class="tweet-user-info">
+          <div class="user-click" onclick="window.location.href='{% url 'profile' tweet.user.profile.pk %}'; return false">
+            <div class="fullname" id="fullname">{{ tweet.user.profile.first_name }} {{ tweet.user.profile.last_name }}</div>
+            <div class="username" id="username">@{{ tweet.user.username }}</div>
+          </div>
+          {% if tweet.user == user %}
+            <div class="tweet-crud">
+              <button class="tweet-edit" onclick="window.location.href='{% url 'update_tweet' tweet.pk %}'; return false">&#9998;</button>
+              <button class="tweet-delete" onclick="window.location.href='{% url 'delete_tweet' tweet.pk %}'; return false">&#10006;</button>
+            </div>
+          {% endif %}
         </div>
         
         <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text|urlize|safe }}</p>
@@ -132,22 +140,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function updateConfig() {
-  var selectedOption = $("#order-select").val(); // Получаем выбранную опцию
+  var selectedOption = $("#order-select").val();
 
-  // Отправляем AJAX запрос на сервер
   $.ajax({
-    url: "../update_config/", // Путь к вашему представлению Django, обрабатывающему изменение базы данных
+    url: "../update_config/",
     type: "POST",
     data: {
-      option: selectedOption, // Передаем выбранную опцию в запросе
-      csrfmiddlewaretoken: "{{ csrf_token }}" // Добавляем CSRF токен для безопасности
+      option: selectedOption,
+      csrfmiddlewaretoken: "{{ csrf_token }}"
     },
     success: function(response) {
-      // Обработка успешного ответа от сервера
       console.log(response);
     },
     error: function(xhr, errmsg, err) {
-      // Обработка ошибки
       console.log(xhr.status + ": " + xhr.responseText);
     }
   });

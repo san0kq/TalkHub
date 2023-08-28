@@ -1,6 +1,8 @@
 from core.presentation.views import (
     CreateTweet,
+    DeleteTweetView,
     IndexView,
+    NotificationView,
     RetweetView,
     TagsView,
     TrendingView,
@@ -8,6 +10,7 @@ from core.presentation.views import (
     TweetReplyView,
     TweetView,
     UpdateConfig,
+    UpdateTweetView,
 )
 from django.urls import path
 
@@ -21,4 +24,7 @@ urlpatterns = [
     path("tweet/retweet/<uuid:tweet_uuid>", RetweetView.as_view(), name="retweet"),
     path("tags/", TagsView.as_view(), name="tags"),
     path("trending/", TrendingView.as_view(), name="trending"),
+    path("tweet/update/<uuid:tweet_uuid>", UpdateTweetView.as_view(), name="update_tweet"),
+    path("tweet/delete/<uuid:tweet_uuid>", DeleteTweetView.as_view(), name="delete_tweet"),
+    path("notification/", NotificationView.as_view(), name="notification"),
 ]

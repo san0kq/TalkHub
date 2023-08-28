@@ -17,6 +17,8 @@ from core.business_logic.services import (
     paginate_pages,
     profile_edit,
     profile_follow,
+    profile_followers,
+    profile_followings,
     profile_unfollow,
 )
 from core.presentation.converters import convert_data_from_form_to_dto
@@ -92,3 +94,17 @@ class UnfollowProfileView(LoginRequiredMixin, View):
         data = ProfileFollowDTO(user=request.user, profile_uuid=profile_uuid)
         profile_unfollow(data=data)
         return redirect("profile", profile_uuid=profile_uuid)
+
+
+class ProfileFollowingsView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
+        followings = profile_followings(profile_uuid=profile_uuid)
+        context = {"followings": followings}
+        return render(request, "followings.html", context=context)
+
+
+class ProfileFollowersView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
+        followers = profile_followers(profile_uuid=profile_uuid)
+        context = {"followers": followers}
+        return render(request, "followers.html", context=context)

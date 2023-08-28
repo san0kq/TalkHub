@@ -40,6 +40,7 @@ a:hover {
   margin-right: 1rem;
   overflow: hidden;
   flex-shrink: 0;
+  cursor: pointer;
 }
 .img-avatar {
   width: 100%;
@@ -51,4 +52,15 @@ a:hover {
   justify-content: center;
   align-items: center;
   margin-right: 1%;
+}
+.notificate {
+    font-size: 20px;
+    vertical-align: 10px;
+    margin-left: 10px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+.logo {
+    cursor: pointer;
 }

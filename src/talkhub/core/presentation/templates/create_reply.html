@@ -17,12 +17,20 @@
             {% endif %}
         </div>
         <div class="tweet-info">
-            <div class="user-info" onclick="window.location.href='{% url 'profile' parent_tweet.user.profile.pk %}'; return false">
-                <div class="fullname" id="fullname">{{ parent_tweet.user.profile.first_name }} {{ parent_tweet.user.profile.last_name }}</div>
-                <div class="username" id="username">@{{ parent_tweet.user.username }}</div>
+            <div class="user-info">
+                <div class="user-click" onclick="window.location.href='{% url 'profile' parent_tweet.user.profile.pk %}'; return false">
+                  <div class="fullname" id="fullname">{{ parent_tweet.user.profile.first_name }} {{ parent_tweet.user.profile.last_name }}</div>
+                  <div class="username" id="username">@{{ parent_tweet.user.username }}</div>
+                </div>
+                {% if parent_tweet.user == user %}
+                  <div class="tweet-crud">
+                    <button class="tweet-edit" onclick="window.location.href='{% url 'update_tweet' parent_tweet.pk %}'; return false">&#9998;</button>
+                    <button class="tweet-delete" onclick="window.location.href='{% url 'delete_tweet' parent_tweet.pk %}'; return false">&#10006;</button>
+                  </div>
+                {% endif %}
             </div>
         
-            <p class="tweet-text" id="tweet-text">{{ parent_tweet.text|urlize|safe }}</p>
+            <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' parent_tweet.pk %}'; return false">{{ parent_tweet.text|urlize|safe }}</p>
             <div class="tweet-action">
                 <div class="tweet-rating">
                     {% if parent_tweet.user == user %}
