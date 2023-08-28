@@ -61,7 +61,7 @@ class ConfirmEmailView(View):
         except ConfirmationCodeExpired:
             return HttpResponseBadRequest(content="Confirmation code expired.")
 
-        if request.user:
-            return redirect(to="profile")
+        if request.user.is_authenticated:
+            return redirect(to="profile", profile_uuid=request.user.profile.pk)
         else:
-            return redirect(to="login")
+            return redirect(to="signin")

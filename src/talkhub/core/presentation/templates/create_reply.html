@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}New tweet{% endblock title %}
+{% block static %}
+<link rel="stylesheet" type="text/css" href="{% static "css/core/create_reply.css" %}" type=”image/x-icon”>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+{% endblock static %}
+{% block body %}
+<div class="tweets" id="tweets">
+    <hr>
+    <div class="tweet">
+        <div class="tweet-avatar" onclick="window.location.href='{% url 'profile' parent_tweet.user.profile.pk %}'; return false">
+            {% if parent_tweet.user.profile.avatar %}
+                <img src="{{ parent_tweet.user.profile.avatar.url }}" alt="avatar-alt" class="img-avatar">
+            {% else %}
+                <img src="{% static "image/default-avatar.png" %}" alt="avatar-alt" class="img-avatar">
+            {% endif %}
+        </div>
+        <div class="tweet-info">
+            <div class="user-info">
+                <div class="user-click" onclick="window.location.href='{% url 'profile' parent_tweet.user.profile.pk %}'; return false">
+                  <div class="fullname" id="fullname">{{ parent_tweet.user.profile.first_name }} {{ parent_tweet.user.profile.last_name }}</div>
+                  <div class="username" id="username">@{{ parent_tweet.user.username }}</div>
+                </div>
+                {% if parent_tweet.user == user %}
+                  <div class="tweet-crud">
+                    <button class="tweet-edit" onclick="window.location.href='{% url 'update_tweet' parent_tweet.pk %}'; return false">&#9998;</button>
+                    <button class="tweet-delete" onclick="window.location.href='{% url 'delete_tweet' parent_tweet.pk %}'; return false">&#10006;</button>
+                  </div>
+                {% endif %}
+            </div>
+        
+            <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' parent_tweet.pk %}'; return false">{{ parent_tweet.text|urlize|safe }}</p>
+            <div class="tweet-action">
+                <div class="tweet-rating">
+                    {% if parent_tweet.user == user %}
+                        <button class="self-like" id="like">&#10084;</button>
+                    {% else %}
+                        <button class="like" id="like" onclick="window.location.href='{% url 'tweet_like' parent_tweet.pk %}'; return false">&#10084;</button>
+                    {% endif %}
+                    <div class="like-count" id="like-count">{{ parent_tweet.rating_count }}</div>
+                </div>
+                <div class="tweet-reply">
+                    <button class="reply" id="reply" onclick="window.location.href='{% url 'tweet_reply' parent_tweet.pk %}'; return false">&#128101;</button>
+                    <div class="reply-count" id="reply-count">{{ parent_tweet.reply_count }}</div>
+                </div>
+                <div class="tweet-retweet">
+                    <button class="retweet" id="retweet" onclick="window.location.href='{% url 'retweet' parent_tweet.pk %}'; return false">&#128257;</button>
+                    <div class="retweet-count" id="retweet-count">{{ parent_tweet.retweet_count }}</div>
+                </div>
+                <div class="publication-date">{{ parent_tweet.created_at }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1>New tweet</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <br>
+    <input type="submit" class="button" value="Send">
+</form>
+{% endblock body %}
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if error_message %}
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ error_message }}',
+            timer: 5000,
+            timerProgressBar: true,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false
+        });
+        {% endif %}
+    });
+</script>
+{% endblock script %}

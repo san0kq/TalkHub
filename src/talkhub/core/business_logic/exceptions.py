@@ -16,3 +16,19 @@ class EmailAlreadyExistsError(Exception):
 
 class UsernameAlreadyExistsError(Exception):
     pass
+
+
+class TagsError(Exception):
+    pass
+
+
+class PageDoesNotExists(Exception):
+    pass
+
+
+class AccessDeniedError(Exception):
+    pass
+
+
+class TweetDoesNotExists(Exception):
+    pass

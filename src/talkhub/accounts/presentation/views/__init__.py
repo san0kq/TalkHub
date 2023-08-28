@@ -1,7 +1,14 @@
 from .login import LoginView
 from .logout import LogoutView
 from .registration import ConfirmEmailView, RegistrationView
-from .profile import ProfileView, ProfileEditView, FollowProfileView, UnfollowProfileView
+from .profile import (
+    ProfileView,
+    ProfileEditView,
+    FollowProfileView,
+    UnfollowProfileView,
+    ProfileFollowingsView,
+    ProfileFollowersView,
+)
 
 __all__ = [
     "RegistrationView",
@@ -12,4 +19,6 @@ __all__ = [
     "ProfileEditView",
     "FollowProfileView",
     "UnfollowProfileView",
+    "ProfileFollowingsView",
+    "ProfileFollowersView",
 ]

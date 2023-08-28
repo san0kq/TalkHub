@@ -9,8 +9,10 @@
     align-items: flex-start;
     padding: 10px;
     border-bottom: 1px solid #ccc;
-    cursor: pointer;
     border-radius: 10px;
+}
+.tweet-text {
+    cursor: pointer;
 }
 .tweet:hover {
     background: #ddd;
@@ -21,6 +23,7 @@
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
+    cursor: pointer;
 }
 .img-avatar {
     width: 100%;
@@ -38,11 +41,19 @@
 }  
 .user-info {
     display: flex;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 5px;
 }
+.user-click {
+    cursor: pointer;
+}
+.fullname {
+    display: inline-block;
+}
 .username {
     color: #999;
+    display: inline-block;
 }  
 .publication-date {
     font-size: 12px;
@@ -70,16 +81,39 @@
 }
 .retweet-user-info {
     font-size: smaller;
+    cursor: pointer;
 }
 .like {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+.self-like {
     border: 0;
     background: transparent;
 }
 .reply {
     border: 0;
     background: transparent;
+    cursor: pointer;
 }
 .retweet {
     border: 0;
     background: transparent;
+    cursor: pointer;
+}
+.tweet-text a:hover {
+    color: blue;
+}
+.tweet-edit, .tweet-delete{
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: transparent;
+}
+.tweet-delete:hover{
+    color: red;
+}
+.tweet-edit:hover{
+    color: black;
 }

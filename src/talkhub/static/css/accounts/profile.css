@@ -33,8 +33,12 @@
 }
 .tweet-user-info {
     display: flex;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 5px;
+}
+.tweet-text {
+    cursor: pointer;
 }
 h2 {
     margin-bottom: 0.5rem;
@@ -66,7 +70,6 @@ a:hover {
     display: flex;
     align-items: flex-start;
     padding: 10px;
-    cursor: pointer;
     border-bottom: 1px solid #ccc;
 }
 .tweet:hover {
@@ -79,6 +82,7 @@ a:hover {
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
+    cursor: pointer;
 }
 .img-avatar {
     width: 100%;
@@ -95,9 +99,16 @@ a:hover {
     word-wrap: break-word;
     margin-left: 15px;
 }
+.user-click {
+    cursor: pointer;
+}
+.fullname {
+    display: inline-block;
+}
 
 .username {
     color: #999;
+    display: inline-block;
 }
 
 .publication-date {
@@ -131,6 +142,7 @@ a:hover {
 }
 .retweet-user-info {
     font-size: smaller;
+    cursor: pointer;
 }
 .btn-logout {
     width: 70px;
@@ -201,12 +213,34 @@ a:hover {
 .like {
     border: 0;
     background: transparent;
+    cursor: pointer;
+}
+.self-like {
+    border: 0;
+    background: transparent;
 }
 .reply {
     border: 0;
     background: transparent;
+    cursor: pointer;
 }
 .retweet {
     border: 0;
     background: transparent;
+    cursor: pointer;
+}
+.tweet-text a:hover {
+    color: blue;
+}
+.tweet-edit, .tweet-delete{
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: transparent;
+}
+.tweet-delete:hover{
+    color: red;
+}
+.tweet-edit:hover{
+    color: black;
 }

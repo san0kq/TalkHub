@@ -3,10 +3,17 @@ from __future__ import annotations
 import sys
 import uuid
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
+
+if TYPE_CHECKING:
+    from django.http import HttpRequest
+    from django.core.paginator import Page
+
+from core.business_logic.exceptions import PageDoesNotExists
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.paginator import EmptyPage, Paginator
 
 if TYPE_CHECKING:
     from django.core.files import File
@@ -34,3 +41,30 @@ def change_file_size(file: InMemoryUploadedFile) -> InMemoryUploadedFile:
         size=sys.getsizeof(output),
         charset=file.charset,
     )
+
+
+def paginate_pages(request: HttpRequest, data: Iterable, per_page: int) -> tuple[Page, int, int]:
+    try:
+        page_number = request.GET["page"]
+    except KeyError:
+        page_number = 1
+
+    paginator = Paginator(data, per_page)
+
+    try:
+        data_paginated = paginator.page(page_number)
+
+    except EmptyPage:
+        raise PageDoesNotExists("Page with provided number doesn't exist.")
+
+    if data_paginated.has_next():
+        next_page = data_paginated.next_page_number()
+    else:
+        next_page = None
+
+    if data_paginated.has_previous():
+        prev_page = data_paginated.previous_page_number()
+    else:
+        prev_page = None
+
+    return data_paginated, prev_page, next_page

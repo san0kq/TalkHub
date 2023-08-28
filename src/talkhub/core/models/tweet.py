@@ -13,7 +13,7 @@ class Tweet(BaseModel):
         to=get_user_model(), related_name="tweets", related_query_name="tweet", on_delete=models.CASCADE
     )
     parent_tweet = models.ForeignKey(
-        to="self", null=True, blank=True, related_name="tweets", related_query_name="tweet", on_delete=models.SET_NULL
+        to="self", null=True, blank=True, related_name="tweets", related_query_name="tweet", on_delete=models.CASCADE
     )
     tags = models.ManyToManyField(to="Tag", related_name="tweets", related_query_name="tweet", blank=True)
 

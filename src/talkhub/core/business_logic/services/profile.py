@@ -24,19 +24,20 @@ def get_profile(profile_uuid: UUID) -> tuple[Profile, list[Tweet]]:
         .annotate(followings_count=Count("followings", distinct=True))
         .get(pk=profile_uuid)
     )
-    profile_tweets = profile.user.tweets.annotate(
-        rating_count=Count("rating"),
-        retweet_count=Count("retweet"),
-        reply_count=Count("tweet"),
+    profile_tweets = Tweet.objects.annotate(
+        rating_count=Count("rating", distinct=True),
+        retweet_count=Count("retweet", distinct=True),
+        reply_count=Count("tweet", distinct=True),
         is_retweet=Value(False, BooleanField()),
-    ).all()
-    retweeted_tweets = Tweet.objects.filter(retweet__user=profile.user).annotate(
-        rating_count=Count("tweet__rating"),
-        retweet_count=Count("tweet__retweet"),
-        reply_count=Count("tweet__tweet"),
+    ).filter(user=profile.user)
+    retweeted_tweets = Tweet.objects.annotate(
+        rating_count=Count("rating", distinct=True),
+        retweet_count=Count("retweet", distinct=True),
+        reply_count=Count("tweet", distinct=True),
         is_retweet=Value(True, BooleanField()),
-    )
-    all_tweets = profile_tweets.union(retweeted_tweets).order_by("-created_at")
+    ).filter(retweet__user=profile.user)
+    all_tweets = profile_tweets.union(retweeted_tweets, all=True).order_by("-created_at")
+
     return profile, list(all_tweets)
 
 
@@ -107,3 +108,13 @@ def profile_unfollow(data: ProfileFollowDTO) -> None:
     profile = Profile.objects.get(pk=data.user.profile.pk)
     profile_following = Profile.objects.get(pk=data.profile_uuid)
     profile.followings.remove(profile_following)
+
+
+def profile_followings(profile_uuid: UUID) -> list[Profile | None]:
+    followings = Profile.objects.prefetch_related("followings").get(pk=profile_uuid).followings.all()
+    return list(followings)
+
+
+def profile_followers(profile_uuid: UUID) -> list[Profile | None]:
+    followers = Profile.objects.prefetch_related("followings").get(pk=profile_uuid).followers.all()
+    return list(followers)
