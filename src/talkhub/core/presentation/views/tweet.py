@@ -46,6 +46,8 @@ class IndexView(LoginRequiredMixin, View):
 
 
 class CreateTweet(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest) -> HttpResponse:
         form = CreateTweetForm()
         context = {"form": form}
@@ -69,6 +71,8 @@ class CreateTweet(LoginRequiredMixin, View):
 
 
 class TweetView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         try:
             tweet, reply_tweets = get_tweet_by_uuid(tweet_uuid=tweet_uuid)
@@ -91,6 +95,8 @@ class TweetView(LoginRequiredMixin, View):
 
 
 class TweetLikeView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         tweet_like(tweet_uuid=tweet_uuid, user=request.user)
         current_page = request.META.get("HTTP_REFERER")
@@ -98,6 +104,8 @@ class TweetLikeView(LoginRequiredMixin, View):
 
 
 class TweetReplyView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, parent_tweet_uuid: UUID) -> HttpResponse:
         form = CreateTweetForm()
         parent_tweet = get_tweet_by_uuid(tweet_uuid=parent_tweet_uuid)[0]
@@ -118,6 +126,8 @@ class TweetReplyView(LoginRequiredMixin, View):
 
 
 class RetweetView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         user = request.user
         create_retweet(user=user, tweet_uuid=tweet_uuid)
@@ -125,6 +135,8 @@ class RetweetView(LoginRequiredMixin, View):
 
 
 class UpdateTweetView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         initial = initial_tweet_form(tweet_uuid=tweet_uuid)
         form = CreateTweetForm(initial=initial)
@@ -157,6 +169,8 @@ class UpdateTweetView(LoginRequiredMixin, View):
 
 
 class DeleteTweetView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         try:
             delete_tweet(tweet_uuid=tweet_uuid, user=request.user)

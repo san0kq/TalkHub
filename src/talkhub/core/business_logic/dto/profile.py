@@ -23,3 +23,10 @@ class ProfileEditDTO:
 class ProfileFollowDTO:
     user: User
     profile_uuid: UUID
+
+
+@dataclass
+class SearchProfileDTO:
+    first_name: Optional[str]
+    last_name: Optional[str]
+    username: Optional[str]

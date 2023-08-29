@@ -8,6 +8,7 @@ from .profile import (
     UnfollowProfileView,
     ProfileFollowingsView,
     ProfileFollowersView,
+    SearchProfileView,
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "UnfollowProfileView",
     "ProfileFollowingsView",
     "ProfileFollowersView",
+    "SearchProfileView",
 ]

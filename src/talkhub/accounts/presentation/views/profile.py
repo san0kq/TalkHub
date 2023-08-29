@@ -8,8 +8,8 @@ if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
     from uuid import UUID
 
-from accounts.presentation.forms import ProfileEditForm
-from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO
+from accounts.presentation.forms import ProfileEditForm, SearchProfileForm
+from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO, SearchProfileDTO
 from core.business_logic.exceptions import EmailAlreadyExistsError, PageDoesNotExists, UsernameAlreadyExistsError
 from core.business_logic.services import (
     get_profile,
@@ -20,6 +20,7 @@ from core.business_logic.services import (
     profile_followers,
     profile_followings,
     profile_unfollow,
+    search_profile,
 )
 from core.presentation.converters import convert_data_from_form_to_dto
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -83,6 +84,8 @@ class ProfileEditView(LoginRequiredMixin, View):
 
 
 class FollowProfileView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
         data = ProfileFollowDTO(user=request.user, profile_uuid=profile_uuid)
         profile_follow(data=data)
@@ -90,6 +93,8 @@ class FollowProfileView(LoginRequiredMixin, View):
 
 
 class UnfollowProfileView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
         data = ProfileFollowDTO(user=request.user, profile_uuid=profile_uuid)
         profile_unfollow(data=data)
@@ -97,6 +102,8 @@ class UnfollowProfileView(LoginRequiredMixin, View):
 
 
 class ProfileFollowingsView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
         followings = profile_followings(profile_uuid=profile_uuid)
         context = {"followings": followings}
@@ -104,7 +111,24 @@ class ProfileFollowingsView(LoginRequiredMixin, View):
 
 
 class ProfileFollowersView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
         followers = profile_followers(profile_uuid=profile_uuid)
         context = {"followers": followers}
         return render(request, "followers.html", context=context)
+
+
+class SearchProfileView(LoginRequiredMixin, View):
+    login_url = "signin"
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        form = SearchProfileForm(request.GET)
+        if form.is_valid():
+            data = convert_data_from_form_to_dto(dto=SearchProfileDTO, data_from_form=form.cleaned_data)
+            profiles = search_profile(data=data)
+            form = SearchProfileForm()
+            context = {"form": form, "profiles": profiles}
+            return render(request, "search_profile.html", context=context)
+        else:
+            return None
