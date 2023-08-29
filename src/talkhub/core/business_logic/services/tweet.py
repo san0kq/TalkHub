@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from logging import getLogger
 from typing import TYPE_CHECKING
 
 from django.db import DataError, IntegrityError, transaction
@@ -13,6 +14,8 @@ if TYPE_CHECKING:
 
 from core.business_logic.exceptions import AccessDeniedError, TagsError, TweetDoesNotExists
 from core.models import Config, Notification, NotificationType, Rating, Retweet, Tag, Tweet, TweetRating
+
+logger = getLogger(__name__)
 
 
 def get_tweets(user: User) -> list[Tweet]:
@@ -48,10 +51,12 @@ def create_tweet(data: CreateTweetDTO, user: User) -> None:
     with transaction.atomic():
         tags = re.findall(r"#\w+", data.text)
         if len(tags) > 20:
+            logger.error("Max number of tags", extra={"username": user.username})
             raise TagsError("Maximum number of tags is 20.")
         try:
             tags = [Tag.objects.get_or_create(name=tag.lower()[1::])[0] for tag in tags]
         except DataError:
+            logger.error("Max tag len", extra={"username": user.username})
             raise TagsError("The maximum tag length is 30 characters.")
         tweet = Tweet.objects.create(text=data.text, user=user)
         tweet.tags.set(tags)
@@ -117,10 +122,12 @@ def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: User) -> None:
     with transaction.atomic():
         tweet = Tweet.objects.get(pk=tweet_uuid)
         if tweet.user != user:
+            logger.error("Tweet access denied", extra={"username": user.username, "tweet_id": tweet_uuid})
             raise AccessDeniedError("You do not have access to this tweet.")
 
         new_tags = re.findall(r"#\w+", data.text)
         if len(new_tags) > 20:
+            logger.error("Max number of tags", extra={"username": user.username})
             raise TagsError("Maximum number of tags is 20.")
 
         old_tags = tweet.tags.all()
@@ -132,15 +139,21 @@ def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: User) -> None:
         try:
             tags = [Tag.objects.get_or_create(name=tag.lower()[1::])[0] for tag in new_tags]
         except DataError:
+            logger.error("Max tag len", extra={"username": user.username})
             raise TagsError("The maximum tag length is 30 characters.")
 
+        logger_data = {"tweet_id": tweet_uuid, "old_text": tweet.text, "new_text": data.text}
         tweet.text = data.text
         tweet.tags.set(tags)
         tweet.save()
+        logger.info("Update tweet", extra=logger_data)
 
 
 def delete_tweet(tweet_uuid: UUID, user: User) -> None:
     tweet = Tweet.objects.get(pk=tweet_uuid)
     if tweet.user != user:
+        logger.error("Tweet access denied", extra={"username": user.username, "tweet_id": tweet_uuid})
         raise AccessDeniedError("You do not have access to this tweet.")
+    logger_data = {"username": user.username, "tweet_text": tweet.text}
     Tweet.objects.filter(pk=tweet_uuid).delete()
+    logger.info("Tweet deleted", extra=logger_data)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from logging import getLogger
 from typing import TYPE_CHECKING, Optional
 
 from django.db import transaction
@@ -14,6 +15,8 @@ from core.business_logic.exceptions import EmailAlreadyExistsError, UsernameAlre
 from core.business_logic.services.common import change_file_size, replace_file_name_to_uuid
 from core.business_logic.services.confirm_email import send_confirm_code
 from core.models import Tweet
+
+logger = getLogger(__name__)
 
 
 def get_profile(profile_uuid: UUID) -> tuple[Profile, list[Tweet]]:
@@ -58,26 +61,35 @@ def initial_profile_form(user_pk: int) -> dict[str, str]:
 
 def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
     with transaction.atomic():
-        if User.objects.exclude(pk=user_pk).filter(username__icontains=data.username).exists():
+        if User.objects.exclude(pk=user_pk).filter(username=data.username).exists():
             raise UsernameAlreadyExistsError(f"User with this username ({data.username}) already exists.")
-        if User.objects.exclude(pk=user_pk).filter(email__icontains=data.email).exists():
+        if User.objects.exclude(pk=user_pk).filter(email=data.email).exists():
             raise EmailAlreadyExistsError(f"User with this email ({data.email}) already exists.")
         user: User = User.objects.get(pk=user_pk)
         profile: Profile = Profile.objects.get(user=user)
         country = Country.objects.get(name=data.country)
+        logger_data = {}
         if user.username != data.username:
+            logger_data["old_username"] = user.username
+            logger_data["new_username"] = data.username
             user.username = data.username
 
         if user.email != data.email:
             send_confirm_code(user=user, email=data.email)
 
         if user.date_of_birth != data.date_of_birth:
+            logger_data["old_date_of_birth"] = user.date_of_birth
+            logger_data["new_date_of_birth"] = data.date_of_birth
             user.date_of_birth = data.date_of_birth
 
         if profile.first_name != data.first_name:
+            logger_data["old_first_name"] = profile.first_name
+            logger_data["new_first_name"] = data.first_name
             profile.first_name = data.first_name
 
         if profile.last_name != data.last_name:
+            logger_data["old_last_name"] = profile.last_name
+            logger_data["new_last_name"] = data.last_name
             profile.last_name = data.last_name
 
         if profile.avatar != data.avatar:
@@ -89,13 +101,18 @@ def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
                 profile.avatar = None
 
         if profile.about != data.about:
+            logger_data["old_about"] = profile.about
+            logger_data["new_about"] = data.about
             profile.about = data.about
 
-        if profile.country != profile.country:
+        if profile.country != country:
+            logger_data["old_country"] = profile.country.name
+            logger_data["new_country"] = country.name
             profile.country = country
 
         user.save()
         profile.save()
+        logger.info("Profile edited", extra={"data": logger_data})
 
 
 def profile_follow(data: ProfileFollowDTO) -> None:

@@ -11,7 +11,7 @@
 </form>
 <div class="profiles" id="profiles">
     <hr>
-  {% for profile in profiles %}
+  {% for profile in profiles_paginated %}
     <div class="profile" onclick="window.location.href='{% url 'profile' profile.pk %}'; return false">
       <div class="profile-avatar">
       {% if profile.avatar %}
@@ -34,10 +34,10 @@
     </div>
   {% endfor %}
   {% if prev_page %}
-    <a href="{% url 'profile' profile.pk %}?page={{ prev_page }}">Prev</a>
+    <a href="{% url 'search-profile' %}?page={{ prev_page }}&first_name={{ first_name }}&last_name={{ last_name }}&username={{ username }}">Prev</a>
   {% endif %}
   {% if next_page %}
-    <a href="{% url 'profile' profile.pk %}?page={{ next_page }}">Next</a>
+    <a href="{% url 'search-profile' %}?page={{ next_page }}&first_name={{ first_name }}&last_name={{ last_name }}&username={{ username }}">Next</a>
   {% endif %}
 </div>
 {% endblock body %}

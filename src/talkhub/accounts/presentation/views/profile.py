@@ -106,7 +106,14 @@ class ProfileFollowingsView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
         followings = profile_followings(profile_uuid=profile_uuid)
-        context = {"followings": followings}
+
+        try:
+            followings_paginated, prev_page, next_page = paginate_pages(request=request, data=followings, per_page=20)
+
+        except PageDoesNotExists as err:
+            return HttpResponseBadRequest(content=err)
+
+        context = {"followings_paginated": followings_paginated, "prev_page": prev_page, "next_page": next_page}
         return render(request, "followings.html", context=context)
 
 
@@ -115,7 +122,14 @@ class ProfileFollowersView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
         followers = profile_followers(profile_uuid=profile_uuid)
-        context = {"followers": followers}
+
+        try:
+            followers_paginated, prev_page, next_page = paginate_pages(request=request, data=followers, per_page=20)
+
+        except PageDoesNotExists as err:
+            return HttpResponseBadRequest(content=err)
+
+        context = {"followers_paginated": followers_paginated, "prev_page": prev_page, "next_page": next_page}
         return render(request, "followers.html", context=context)
 
 
@@ -128,7 +142,27 @@ class SearchProfileView(LoginRequiredMixin, View):
             data = convert_data_from_form_to_dto(dto=SearchProfileDTO, data_from_form=form.cleaned_data)
             profiles = search_profile(data=data)
             form = SearchProfileForm()
-            context = {"form": form, "profiles": profiles}
+
+            if profiles:
+                try:
+                    profiles_paginated, prev_page, next_page = paginate_pages(
+                        request=request, data=profiles, per_page=20
+                    )
+
+                except PageDoesNotExists as err:
+                    return HttpResponseBadRequest(content=err)
+
+                context = {
+                    "form": form,
+                    "profiles_paginated": profiles_paginated,
+                    "prev_page": prev_page,
+                    "next_page": next_page,
+                    "first_name": data.first_name,
+                    "last_name": data.last_name,
+                    "username": data.username,
+                }
+            else:
+                context = {"form": form}
             return render(request, "search_profile.html", context=context)
         else:
             return None

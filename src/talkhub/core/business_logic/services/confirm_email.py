@@ -35,6 +35,7 @@ def send_confirm_code(user: User, email: str) -> None:
         from_email=settings.EMAIL_FROM,
         recipient_list=[email],
     )
+    logger.info("Send confirm code", extra={"code": confirmation_code, "email": email})
 
 
 def confirm_user_email(confirmation_code: str, email: str) -> None:
@@ -54,9 +55,12 @@ def confirm_user_email(confirmation_code: str, email: str) -> None:
     user = code_data.user
 
     if user.is_active:
+        logger_data = {"old_email": user.email, "new_email": email}
         user.email = email
+        logger.info("Change Email", extra={"data": logger_data})
     else:
         user.is_active = True
+        logger.info("User is active", extra={"user": user.username})
 
     user.save()
     code_data.delete()

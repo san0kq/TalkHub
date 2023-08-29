@@ -23,8 +23,10 @@ def create_user(data: RegistrationDTO) -> None:
     user_model: User = get_user_model()
 
     if user_model.objects.filter(email=data.email).exists():
+        logger.error("Email already exists", extra={"email": data.email})
         raise EmailAlreadyExistsError
     if user_model.objects.filter(username=data.username).exists():
+        logger.error("Username already exists", extra={"username": data.username})
         raise UsernameAlreadyExistsError
 
     created_user = user_model.objects.create_user(
@@ -32,4 +34,5 @@ def create_user(data: RegistrationDTO) -> None:
     )
     Config.objects.create(tweets_order="-created_at", user=created_user)
     Profile.objects.create(user=created_user)
+    logger.info("Register user", extra={"user_id": created_user.pk})
     send_confirm_code(user=created_user, email=data.email)

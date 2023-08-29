@@ -5,8 +5,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
+from core.business_logic.exceptions import PageDoesNotExists
 from core.business_logic.services import get_notifications
+from core.business_logic.services.common import paginate_pages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseBadRequest
 from django.shortcuts import render
 from django.views import View
 
@@ -17,5 +20,14 @@ class NotificationView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         user = request.user
         notifications = get_notifications(user=user)
-        context = {"notifications": notifications}
+
+        try:
+            notifications_paginated, prev_page, next_page = paginate_pages(
+                request=request, data=notifications, per_page=20
+            )
+        except PageDoesNotExists as err:
+            return HttpResponseBadRequest(content=err)
+
+        context = {"notifications_paginated": notifications_paginated, "next_page": next_page, "prev_page": prev_page}
+
         return render(request, "notification.html", context=context)

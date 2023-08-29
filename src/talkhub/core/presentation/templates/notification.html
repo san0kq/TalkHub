@@ -7,7 +7,7 @@
 {% block body %}
 <div class="notifications" id="notifications">
     <h1>Notifications</h1>
-  {% for notification in notifications %}
+  {% for notification in notifications_paginated %}
     <div class="notification">
         {% if notification.notification_type.name == "admin" %}
             <div class="notification-type-admin">
@@ -39,12 +39,11 @@
         {% endif %}
     </div>
     {% endfor %}
-</div>
-  {% if prev_page %}
-    <a href="{% url 'profile' profile.pk %}?page={{ prev_page }}">Prev</a>
-  {% endif %}
-  {% if next_page %}
-    <a href="{% url 'profile' profile.pk %}?page={{ next_page }}">Next</a>
-  {% endif %}
+    {% if prev_page %}
+        <a href="{% url 'notification' %}?page={{ prev_page }}">Prev</a>
+    {% endif %}
+    {% if next_page %}
+        <a href="{% url 'notification' %}?page={{ next_page }}">Next</a>
+    {% endif %}
 </div>
 {% endblock body %}

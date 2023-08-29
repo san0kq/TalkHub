@@ -24,8 +24,8 @@
                 </div>
                 {% if parent_tweet.user == user %}
                   <div class="tweet-crud">
-                    <button class="tweet-edit" onclick="window.location.href='{% url 'update_tweet' parent_tweet.pk %}'; return false">&#9998;</button>
-                    <button class="tweet-delete" onclick="window.location.href='{% url 'delete_tweet' parent_tweet.pk %}'; return false">&#10006;</button>
+                    <button class="tweet-edit" onclick="window.location.href='{% url 'update-tweet' parent_tweet.pk %}'; return false">&#9998;</button>
+                    <button class="tweet-delete" onclick="window.location.href='{% url 'delete-tweet' parent_tweet.pk %}'; return false">&#10006;</button>
                   </div>
                 {% endif %}
             </div>
@@ -36,12 +36,12 @@
                     {% if parent_tweet.user == user %}
                         <button class="self-like" id="like">&#10084;</button>
                     {% else %}
-                        <button class="like" id="like" onclick="window.location.href='{% url 'tweet_like' parent_tweet.pk %}'; return false">&#10084;</button>
+                        <button class="like" id="like" onclick="window.location.href='{% url 'tweet-like' parent_tweet.pk %}'; return false">&#10084;</button>
                     {% endif %}
                     <div class="like-count" id="like-count">{{ parent_tweet.rating_count }}</div>
                 </div>
                 <div class="tweet-reply">
-                    <button class="reply" id="reply" onclick="window.location.href='{% url 'tweet_reply' parent_tweet.pk %}'; return false">&#128101;</button>
+                    <button class="reply" id="reply" onclick="window.location.href='{% url 'tweet-reply' parent_tweet.pk %}'; return false">&#128101;</button>
                     <div class="reply-count" id="reply-count">{{ parent_tweet.reply_count }}</div>
                 </div>
                 <div class="tweet-retweet">

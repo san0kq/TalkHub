@@ -9,11 +9,11 @@
   <div class="follow">
     <div class="follow-dtl">
       <h3>Followings</h3>
-      <a href="{% url 'profile_followings' profile.pk %}">{{ profile.followings_count }}</a>
+      <a href="{% url 'profile-followings' profile.pk %}">{{ profile.followings_count }}</a>
     </div>
     <div class="follow-dtl">
       <h3>Followers</h3>
-      <a href="{% url 'profile_followers' profile.pk %}">{{ profile.followers_count }}</a>
+      <a href="{% url 'profile-followers' profile.pk %}">{{ profile.followers_count }}</a>
     </div>
   </div>
   <div class="avatar-info">
@@ -27,7 +27,7 @@
     <div class="profile-info">
       <div class="profile-edit">
         <h2>{{ profile.first_name}} {{ profile.last_name }}</h2>
-        <a href="{% url 'profile_edit' %}" class="btn-edit">&#9997;</a>
+        <a href="{% url 'profile-edit' %}" class="btn-edit">&#9997;</a>
       </div>
       <p>Username: {{ profile.user.username }}</p>
       <p>Email: {{ profile.user.email }}</p>
@@ -56,9 +56,9 @@
     </div>
   {% else %}
     {% if profile in user.profile.followings.all %}
-      <button type="reset" class="btn-unfollow" onclick="window.location.href='{% url 'profile_unfollow' profile.pk %}'; return false">Unfollow</button>
+      <button type="reset" class="btn-unfollow" onclick="window.location.href='{% url 'profile-unfollow' profile.pk %}'; return false">Unfollow</button>
     {% else %}
-      <button type="submit" class="btn-follow" onclick="window.location.href='{% url 'profile_follow' profile.pk %}'; return false">Follow</button>
+      <button type="submit" class="btn-follow" onclick="window.location.href='{% url 'profile-follow' profile.pk %}'; return false">Follow</button>
     {% endif %}
   {% endif %}
 </div>
@@ -75,7 +75,7 @@
 <div class="tweets" id="tweets">
   <div class="tweet-act">
     <h2>Tweets</h2>
-    <button type="submit" class="btn-new-tweet" onclick="window.location.href='{% url 'create_tweet' %}'; return false">New tweet</button>
+    <button type="submit" class="btn-new-tweet" onclick="window.location.href='{% url 'create-tweet' %}'; return false">New tweet</button>
   </div>
   {% for tweet in tweets %}
     <div class="tweet">
@@ -99,8 +99,8 @@
           </div>
           {% if tweet.user == user %}
             <div class="tweet-crud">
-              <button class="tweet-edit" onclick="window.location.href='{% url 'update_tweet' tweet.pk %}'; return false">&#9998;</button>
-              <button class="tweet-delete" onclick="window.location.href='{% url 'delete_tweet' tweet.pk %}'; return false">&#10006;</button>
+              <button class="tweet-edit" onclick="window.location.href='{% url 'update-tweet' tweet.pk %}'; return false">&#9998;</button>
+              <button class="tweet-delete" onclick="window.location.href='{% url 'delete-tweet' tweet.pk %}'; return false">&#10006;</button>
             </div>
           {% endif %}
         </div>
@@ -111,12 +111,12 @@
             {% if tweet.user == user %}
               <button class="self-like" id="like">&#10084;</button>
             {% else %}
-              <button class="like" id="like" onclick="window.location.href='{% url 'tweet_like' tweet.pk %}'; return false">&#10084;</button>
+              <button class="like" id="like" onclick="window.location.href='{% url 'tweet-like' tweet.pk %}'; return false">&#10084;</button>
             {% endif %}
             <div class="like-count" id="like-count">{{ tweet.rating_count }}</div>
           </div>
           <div class="tweet-reply">
-            <button class="reply" id="reply" onclick="window.location.href='{% url 'tweet_reply' tweet.pk %}'; return false">&#128101;</button>
+            <button class="reply" id="reply" onclick="window.location.href='{% url 'tweet-reply' tweet.pk %}'; return false">&#128101;</button>
             <div class="reply-count" id="reply-count">{{ tweet.reply_count }}</div>
           </div>
           <div class="tweet-retweet">

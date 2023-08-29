@@ -7,7 +7,7 @@
 {% block body %}
 <div class="profiles" id="profiles">
     <h1>Followers</h1>
-  {% for profile in followers %}
+  {% for profile in followers_paginated %}
     <div class="profile" onclick="window.location.href='{% url 'profile' profile.pk %}'; return false">
       <div class="profile-avatar">
       {% if profile.avatar %}
@@ -30,10 +30,10 @@
     </div>
   {% endfor %}
   {% if prev_page %}
-    <a href="{% url 'profile' profile.pk %}?page={{ prev_page }}">Prev</a>
+    <a href="{% url 'profile-followers' user.profile.pk %}?page={{ prev_page }}">Prev</a>
   {% endif %}
   {% if next_page %}
-    <a href="{% url 'profile' profile.pk %}?page={{ next_page }}">Next</a>
+    <a href="{% url 'profile-followers' user.profile.pk %}?page={{ next_page }}">Next</a>
   {% endif %}
 </div>
 {% endblock body %}
