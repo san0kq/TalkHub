@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from django.db import transaction
 from django.db.models import BooleanField, Count, Value
 
 if TYPE_CHECKING:
-    from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO
+    from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO, SearchProfileDTO
     from uuid import UUID
 
 from accounts.models import Country, Profile, User
@@ -118,3 +118,17 @@ def profile_followings(profile_uuid: UUID) -> list[Profile | None]:
 def profile_followers(profile_uuid: UUID) -> list[Profile | None]:
     followers = Profile.objects.prefetch_related("followings").get(pk=profile_uuid).followers.all()
     return list(followers)
+
+
+def search_profile(data: SearchProfileDTO) -> Optional[list[Profile]]:
+    if data.first_name or data.last_name or data.username:
+        profiles = Profile.objects.select_related("user")
+        if data.first_name:
+            profiles = profiles.filter(first_name__icontains=data.first_name)
+        if data.last_name:
+            profiles = profiles.filter(last_name__icontains=data.last_name)
+        if data.username:
+            profiles = profiles.filter(user__username__icontains=data.username)
+        return list(profiles)
+    else:
+        return None

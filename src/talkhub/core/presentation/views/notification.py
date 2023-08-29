@@ -12,6 +12,8 @@ from django.views import View
 
 
 class NotificationView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest) -> HttpResponse:
         user = request.user
         notifications = get_notifications(user=user)

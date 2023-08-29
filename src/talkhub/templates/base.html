@@ -20,6 +20,7 @@
         </ul>
         {% if user.is_authenticated %}
           <div class="profile-act">
+            <button class="search" onclick="window.location.href='{% url 'search_profile' %}'; return false">&#128270;</button>
             <div class="avatar" onclick="window.location.href='{% url 'profile' user.profile.pk %}'; return false">
               {% if user.profile.avatar %}
                 <img class="img-avatar" src="{{ user.profile.avatar.url }}" alt="AVATAR_ALT">

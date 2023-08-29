@@ -24,3 +24,9 @@ class ProfileEditForm(forms.Form):
         validators=[ValidateMinAge(min_age=18), ValidateMaxAge(max_age=140)],
         required=False,
     )
+
+
+class SearchProfileForm(forms.Form):
+    first_name = forms.CharField(label="First name", max_length=150, required=False, strip=True)
+    last_name = forms.CharField(label="Last name", max_length=150, required=False, strip=True)
+    username = forms.CharField(label="Username", max_length=150, required=False, strip=True)

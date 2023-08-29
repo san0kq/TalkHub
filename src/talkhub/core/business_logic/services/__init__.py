@@ -20,6 +20,7 @@ from .profile import (
     profile_unfollow,
     profile_followings,
     profile_followers,
+    search_profile,
 )
 from .update_config import update_config
 from .tag import find_tags, get_trending_tags
@@ -52,4 +53,5 @@ __all__ = [
     "profile_followings",
     "profile_followers",
     "get_notifications",
+    "search_profile",
 ]

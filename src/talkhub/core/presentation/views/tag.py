@@ -17,6 +17,8 @@ from django.views import View
 
 
 class TagsView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest) -> HttpResponse:
         form = SearchTagForm(request.GET)
         if form.is_valid():
@@ -41,6 +43,8 @@ class TagsView(LoginRequiredMixin, View):
 
 
 class TrendingView(LoginRequiredMixin, View):
+    login_url = "signin"
+
     def get(self, request: HttpRequest) -> HttpResponse:
         data = TrendingDTO(user=request.user)
         tags = get_trending_tags(data=data)
