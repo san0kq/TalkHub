@@ -43,7 +43,7 @@
       <div class="order-config">
         Order of displaying tweets on the main page:
         <select class="order-select" id="order-select" onchange="updateConfig()">
-          {% if profile.user.config.tweets_order == "-created_at" %}
+          {% if profile.user.config.tweets_order == "-sort_date" %}
             <option selected>Date of published</option>
             <option>Ratings count</option>
           {% else %}
@@ -88,7 +88,7 @@
       </div>
       <div class="tweet-info">
         {% if tweet.is_retweet %}
-          <div class="retweet-user-info" onclick="window.location.href='{% url 'profile' tweet.retweets.first.user.profile.pk %}'; return false">{{ tweet.retweets.first.user.profile.first_name }} {{ tweet.retweets.first.user.profile.last_name }} retweeted this at {{ tweet.retweets.first.created_at }}</div>
+          <div class="retweet-user-info" onclick="window.location.href='{% url 'profile' tweet.retweet_profile_pk %}'; return false">{{ tweet.retweet_first_name}} {{ tweet.retweet_last_name}} retweeted this at {{ tweet.sort_date }}</div>
         {% elif tweet.parent_tweet %}
           <div class="retweet-user-info" onclick="window.location.href='{% url 'tweet' tweet.parent_tweet.pk %}'; return false">reply to {{ tweet.parent_tweet.user.profile.first_name }} {{ tweet.parent_tweet.user.profile.last_name }} tweet</div>
         {% endif %}
@@ -103,6 +103,11 @@
               <button class="tweet-delete" onclick="window.location.href='{% url 'delete-tweet' tweet.pk %}'; return false">&#10006;</button>
             </div>
           {% endif %}
+          {% if tweet.is_retweet and tweet.retweet_profile_pk == user.profile.pk %}
+              <div class="tweet-crud">
+                <button class="tweet-delete" onclick="window.location.href='{% url 'delete-retweet' tweet.retweet_pk %}'; return false">&#10006;</button>
+              </div>
+            {% endif %}
         </div>
         
         <p class="tweet-text" id="tweet-text" onclick="window.location.href='{% url 'tweet' tweet.pk %}'; return false">{{ tweet.text|urlize|safe }}</p>
@@ -120,7 +125,11 @@
             <div class="reply-count" id="reply-count">{{ tweet.reply_count }}</div>
           </div>
           <div class="tweet-retweet">
-            <button class="retweet" id="retweet" onclick="window.location.href='{% url 'retweet' tweet.pk %}'; return false">&#128257;</button>
+            {% if tweet.retweet_profile_pk == user.profile.pk or tweet.user == user %}
+              <button class="retweet-active" id="retweet">&#128257;</button>
+            {% else %}
+              <button class="retweet" id="retweet" onclick="window.location.href='{% url 'retweet' tweet.pk %}'; return false">&#128257;</button>
+            {% endif %}
             <div class="retweet-count" id="retweet-count">{{ tweet.retweet_count }}</div>
           </div>
           <div class="publication-date">{{ tweet.created_at }}</div>

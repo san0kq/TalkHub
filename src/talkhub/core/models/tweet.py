@@ -12,6 +12,7 @@ class Tweet(BaseModel):
     user = models.ForeignKey(
         to=get_user_model(), related_name="tweets", related_query_name="tweet", on_delete=models.CASCADE
     )
+    retweet_count = models.PositiveIntegerField(default=0)
     parent_tweet = models.ForeignKey(
         to="self", null=True, blank=True, related_name="tweets", related_query_name="tweet", on_delete=models.CASCADE
     )

@@ -3,14 +3,16 @@ from __future__ import annotations
 from logging import getLogger
 from typing import TYPE_CHECKING, Optional
 
+from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.db.models import BooleanField, Count, Value
+from django.db.models import BigIntegerField, BooleanField, CharField, Count, F, UUIDField, Value
 
 if TYPE_CHECKING:
     from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO, SearchProfileDTO
     from uuid import UUID
+    from django.contrib.auth.models import AbstractBaseUser
 
-from accounts.models import Country, Profile, User
+from accounts.models import Country, Profile
 from core.business_logic.exceptions import EmailAlreadyExistsError, UsernameAlreadyExistsError
 from core.business_logic.services.common import change_file_size, replace_file_name_to_uuid
 from core.business_logic.services.confirm_email import send_confirm_code
@@ -27,25 +29,44 @@ def get_profile(profile_uuid: UUID) -> tuple[Profile, list[Tweet]]:
         .annotate(followings_count=Count("followings", distinct=True))
         .get(pk=profile_uuid)
     )
-    profile_tweets = Tweet.objects.annotate(
-        rating_count=Count("rating", distinct=True),
-        retweet_count=Count("retweet", distinct=True),
-        reply_count=Count("tweet", distinct=True),
-        is_retweet=Value(False, BooleanField()),
-    ).filter(user=profile.user)
-    retweeted_tweets = Tweet.objects.annotate(
-        rating_count=Count("rating", distinct=True),
-        retweet_count=Count("retweet", distinct=True),
-        reply_count=Count("tweet", distinct=True),
-        is_retweet=Value(True, BooleanField()),
-    ).filter(retweet__user=profile.user)
-    all_tweets = profile_tweets.union(retweeted_tweets, all=True).order_by("-created_at")
+    profile_tweets = (
+        Tweet.objects.select_related("user", "parent_tweet")
+        .prefetch_related("retweets", "ratings", "tweets")
+        .annotate(
+            rating_count=Count("rating", distinct=True),
+            reply_count=Count("tweet", distinct=True),
+            is_retweet=Value(False, BooleanField()),
+            retweet_first_name=Value("", CharField()),
+            retweet_last_name=Value("", CharField()),
+            retweet_profile_pk=Value(0, UUIDField()),
+            retweet_pk=Value(0, BigIntegerField()),
+            sort_date=F("created_at"),
+        )
+        .filter(user=profile.user)
+    )
+    retweeted_tweets = (
+        Tweet.objects.select_related("user", "parent_tweet")
+        .prefetch_related("retweets", "ratings", "tweets")
+        .annotate(
+            rating_count=Count("rating", distinct=True),
+            reply_count=Count("tweet", distinct=True),
+            is_retweet=Value(True, BooleanField()),
+            retweet_first_name=F("retweet__user__profile__first_name"),
+            retweet_last_name=F("retweet__user__profile__last_name"),
+            retweet_profile_pk=F("retweet__user__profile__pk"),
+            retweet_pk=F("retweet__pk"),
+            sort_date=F("retweet__created_at"),
+        )
+        .filter(retweet_profile_pk=profile.pk)
+    )
+    all_tweets = profile_tweets.union(retweeted_tweets, all=True).order_by("-sort_date")
 
     return profile, list(all_tweets)
 
 
 def initial_profile_form(user_pk: int) -> dict[str, str]:
-    user = User.objects.select_related("profile", "profile__country").get(pk=user_pk)
+    user_model = get_user_model()
+    user = user_model.objects.select_related("profile", "profile__country").get(pk=user_pk)
     initial_data = {
         "username": user.username,
         "first_name": user.profile.first_name,
@@ -61,11 +82,13 @@ def initial_profile_form(user_pk: int) -> dict[str, str]:
 
 def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
     with transaction.atomic():
-        if User.objects.exclude(pk=user_pk).filter(username=data.username).exists():
+        user_model = get_user_model()
+
+        if user_model.objects.exclude(pk=user_pk).filter(username=data.username).exists():
             raise UsernameAlreadyExistsError(f"User with this username ({data.username}) already exists.")
-        if User.objects.exclude(pk=user_pk).filter(email=data.email).exists():
+        if user_model.objects.exclude(pk=user_pk).filter(email=data.email).exists():
             raise EmailAlreadyExistsError(f"User with this email ({data.email}) already exists.")
-        user: User = User.objects.get(pk=user_pk)
+        user: AbstractBaseUser = user_model.objects.get(pk=user_pk)
         profile: Profile = Profile.objects.get(user=user)
         country = Country.objects.get(name=data.country)
         logger_data = {}

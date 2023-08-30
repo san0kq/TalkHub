@@ -18,4 +18,4 @@ class UpdateConfig(LoginRequiredMixin, View):
         user = request.user
         selected_option = request.POST["option"]
         update_config(user=user, option=selected_option)
-        return redirect("profile")
+        return redirect("profile", profile_uuid=user.profile.pk)

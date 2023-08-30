@@ -101,6 +101,10 @@ a:hover {
     justify-content: center;
     margin-right: 30px;
 }
+.retweet-active {
+    border: 0;
+    background: transparent;
+}
 .retweet-user-info {
     font-size: smaller;
     cursor: pointer;

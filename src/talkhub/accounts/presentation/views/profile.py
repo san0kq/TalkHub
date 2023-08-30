@@ -58,10 +58,10 @@ class ProfileEditView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponse:
         user = request.user
         form = ProfileEditForm(request.POST, files=request.FILES)
+        error_message: UsernameAlreadyExistsError | EmailAlreadyExistsError | None = None
 
         if form.is_valid():
             data = convert_data_from_form_to_dto(dto=ProfileEditDTO, data_from_form=form.cleaned_data)
-            error_message: Exception | None = None
 
             try:
                 profile_edit(data=data, user_pk=user.pk)

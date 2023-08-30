@@ -3,7 +3,7 @@ from datetime import date
 from typing import Optional
 from uuid import UUID
 
-from accounts.models import User
+from django.contrib.auth.models import AbstractBaseUser
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
@@ -21,7 +21,7 @@ class ProfileEditDTO:
 
 @dataclass
 class ProfileFollowDTO:
-    user: User
+    user: AbstractBaseUser
     profile_uuid: UUID
 
 

@@ -11,6 +11,7 @@ from .tweet import (
     initial_tweet_form,
     update_tweet,
     delete_tweet,
+    delete_retweet,
 )
 from .profile import (
     get_profile,
@@ -54,4 +55,5 @@ __all__ = [
     "profile_followers",
     "get_notifications",
     "search_profile",
+    "delete_retweet",
 ]

@@ -229,6 +229,11 @@ a:hover {
     background: transparent;
     cursor: pointer;
 }
+.retweet-active {
+    border: 0;
+    background: transparent;
+    
+}
 .tweet-text a:hover {
     color: blue;
 }

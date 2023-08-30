@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from core.business_logic.dto import SearchTagDTO, TrendingDTO
@@ -17,7 +17,6 @@ def find_tags(data: SearchTagDTO) -> list[Tweet]:
         .prefetch_related("tags")
         .annotate(
             rating_count=Count("rating", distinct=True),
-            retweet_count=Count("retweet", distinct=True),
             reply_count=Count("tweet", distinct=True),
         )
         .filter(tags__name=data.name.lower())
@@ -26,7 +25,10 @@ def find_tags(data: SearchTagDTO) -> list[Tweet]:
     return list(tweets)
 
 
-def get_trending_tags(data: TrendingDTO) -> Tag:
+def get_trending_tags(data: TrendingDTO) -> Optional[Tag]:
+    if not data.user.profile.country:
+        return None
+
     day_start = timezone.now() - timedelta(days=1)
 
     tags: Tag = (

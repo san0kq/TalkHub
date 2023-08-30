@@ -7,6 +7,7 @@ from .tweet import (
     RetweetView,
     UpdateTweetView,
     DeleteTweetView,
+    DeleteRetweetView,
 )
 from .config import UpdateConfig
 from .tag import TagsView, TrendingView
@@ -26,4 +27,5 @@ __all__ = [
     "UpdateTweetView",
     "DeleteTweetView",
     "NotificationView",
+    "DeleteRetweetView",
 ]

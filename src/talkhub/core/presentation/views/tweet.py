@@ -17,6 +17,7 @@ from core.business_logic.services import (
     create_reply,
     create_retweet,
     create_tweet,
+    delete_retweet,
     delete_tweet,
     get_tweet_by_uuid,
     get_tweets,
@@ -174,6 +175,19 @@ class DeleteTweetView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         try:
             delete_tweet(tweet_uuid=tweet_uuid, user=request.user)
+        except AccessDeniedError:
+            return redirect("index")
+
+        current_page = request.META.get("HTTP_REFERER")
+        return redirect(current_page)
+
+
+class DeleteRetweetView(LoginRequiredMixin, View):
+    login_url = "signin"
+
+    def get(self, request: HttpRequest, retweet_pk: int) -> HttpResponse:
+        try:
+            delete_retweet(retweet_pk=retweet_pk, user=request.user)
         except AccessDeniedError:
             return redirect("index")
 

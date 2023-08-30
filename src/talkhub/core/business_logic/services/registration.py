@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from django.contrib.auth import get_user_model
 
 if TYPE_CHECKING:
-    from accounts.models import User
+    from django.contrib.auth.models import AbstractBaseUser
 
 from accounts.models import Profile
 from core.business_logic.dto import RegistrationDTO
@@ -20,7 +20,7 @@ logger = getLogger(__name__)
 def create_user(data: RegistrationDTO) -> None:
     logger.info("Get user creation request", extra={"user": data})
 
-    user_model: User = get_user_model()
+    user_model: AbstractBaseUser = get_user_model()
 
     if user_model.objects.filter(email=data.email).exists():
         logger.error("Email already exists", extra={"email": data.email})

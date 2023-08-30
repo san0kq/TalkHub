@@ -10,7 +10,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 
 if TYPE_CHECKING:
-    from accounts.models import User
+    from django.contrib.auth.models import AbstractBaseUser
 
 from accounts.models import EmailConfirmationCode
 from core.business_logic.exceptions import ConfirmationCodeExpired, ConfirmationCodeNotExists
@@ -18,7 +18,7 @@ from core.business_logic.exceptions import ConfirmationCodeExpired, Confirmation
 logger = getLogger(__name__)
 
 
-def send_confirm_code(user: User, email: str) -> None:
+def send_confirm_code(user: AbstractBaseUser, email: str) -> None:
     confirmation_code = str(uuid.uuid4())
     code_expiration_time = int(time.time()) + settings.CONFIRMATION_CODE_LIFETIME
 

@@ -14,6 +14,7 @@ class Retweet(BaseModel):
 
     class Meta:
         verbose_name_plural = "retweets"
+        unique_together = ("tweet", "user")
 
     def __str__(self) -> str:
         return f"Tweet ID: {self.tweet.pk}. User ID: {self.user.pk}"

@@ -4,11 +4,11 @@ import re
 from logging import getLogger
 from typing import TYPE_CHECKING
 
-from django.db import DataError, IntegrityError, transaction
-from django.db.models import BooleanField, Count, Q, Value
+from django.db import DataError, transaction
+from django.db.models import BigIntegerField, BooleanField, CharField, Count, F, UUIDField, Value
 
 if TYPE_CHECKING:
-    from accounts.models import User
+    from django.contrib.auth.models import AbstractBaseUser
     from core.business_logic.dto import CreateTweetDTO
     from uuid import UUID
 
@@ -18,36 +18,45 @@ from core.models import Config, Notification, NotificationType, Rating, Retweet,
 logger = getLogger(__name__)
 
 
-def get_tweets(user: User) -> list[Tweet]:
+def get_tweets(user: AbstractBaseUser) -> list[Tweet]:
     order_by = Config.objects.get(user=user).tweets_order
     tweets = (
-        Tweet.objects.select_related("user__profile", "parent_tweet")
-        .prefetch_related("retweets")
+        Tweet.objects.select_related("user", "parent_tweet")
+        .prefetch_related("retweets", "ratings", "tweets")
         .annotate(
             rating_count=Count("rating", distinct=True),
-            retweet_count=Count("retweet", distinct=True),
             reply_count=Count("tweet", distinct=True),
             is_retweet=Value(False, output_field=BooleanField()),
+            retweet_first_name=Value("", CharField()),
+            retweet_last_name=Value("", CharField()),
+            retweet_profile_pk=Value(0, UUIDField()),
+            retweet_pk=Value(0, BigIntegerField()),
+            sort_date=F("created_at"),
         )
         .filter(user__profile__follower=user.profile)
+        .filter(parent_tweet__isnull=True)
     )
     retweets = (
-        Tweet.objects.select_related("user__profile", "parent_tweet")
-        .prefetch_related("retweets")
+        Tweet.objects.select_related("user", "parent_tweet")
+        .prefetch_related("retweets", "ratings", "tweets")
         .annotate(
             rating_count=Count("rating", distinct=True),
-            retweet_count=Count("retweet", distinct=True),
             reply_count=Count("tweet", distinct=True),
-            is_retweet=Value(True, output_field=BooleanField()),
+            is_retweet=Value(True, BooleanField()),
+            retweet_first_name=F("retweet__user__profile__first_name"),
+            retweet_last_name=F("retweet__user__profile__last_name"),
+            retweet_profile_pk=F("retweet__user__profile__pk"),
+            retweet_pk=F("retweet__pk"),
+            sort_date=F("retweet__created_at"),
         )
-        .filter(Q(retweet__isnull=False) & Q(retweet__user__profile__in=user.profile.followings.all()))
+        .filter(retweet__user__profile__in=user.profile.followings.all())
     )
     tweets = tweets.union(retweets, all=True).order_by(order_by)
 
     return list(tweets)
 
 
-def create_tweet(data: CreateTweetDTO, user: User) -> None:
+def create_tweet(data: CreateTweetDTO, user: AbstractBaseUser) -> None:
     with transaction.atomic():
         tags = re.findall(r"#\w+", data.text)
         if len(tags) > 20:
@@ -68,7 +77,6 @@ def get_tweet_by_uuid(tweet_uuid: UUID) -> tuple[Tweet, list[Tweet]]:
             Tweet.objects.select_related("user__profile")
             .annotate(
                 rating_count=Count("rating", distinct=True),
-                retweet_count=Count("retweet", distinct=True),
                 reply_count=Count("tweet", distinct=True),
             )
             .get(pk=tweet_uuid)
@@ -80,7 +88,6 @@ def get_tweet_by_uuid(tweet_uuid: UUID) -> tuple[Tweet, list[Tweet]]:
         Tweet.objects.select_related("user__profile")
         .annotate(
             rating_count=Count("rating", distinct=True),
-            retweet_count=Count("retweet", distinct=True),
             reply_count=Count("tweet", distinct=True),
         )
         .filter(parent_tweet=tweet)
@@ -89,27 +96,33 @@ def get_tweet_by_uuid(tweet_uuid: UUID) -> tuple[Tweet, list[Tweet]]:
     return tweet, list(reply_tweets)
 
 
-def tweet_like(tweet_uuid: UUID, user: User) -> None:
+def tweet_like(tweet_uuid: UUID, user: AbstractBaseUser) -> None:
     with transaction.atomic():
         tweet = Tweet.objects.get(pk=tweet_uuid)
         rating = Rating.objects.get(name="like")
         notification_type = NotificationType.objects.get(name="rating")
-        try:
+
+        if TweetRating.objects.filter(tweet=tweet, rating=rating, user=user).exists():
+            TweetRating.objects.get(tweet=tweet, rating=rating, user=user).delete()
+            notification = Notification.objects.get(tweet=tweet, user=user, notification_type=notification_type)
+            notification.recipients.remove(tweet.user)
+            notification.delete()
+        else:
             TweetRating.objects.create(tweet=tweet, rating=rating, user=user)
             notification = Notification.objects.create(tweet=tweet, user=user, notification_type=notification_type)
             notification.recipients.add(tweet.user)
-        except IntegrityError:
-            TweetRating.objects.get(tweet=tweet, rating=rating, user=user).delete()
 
 
-def create_reply(data: CreateTweetDTO, user: User, parent_tweet_uuid: UUID) -> None:
+def create_reply(data: CreateTweetDTO, user: AbstractBaseUser, parent_tweet_uuid: UUID) -> None:
     parent_tweet = Tweet.objects.get(pk=parent_tweet_uuid)
     Tweet.objects.create(text=data.text, user=user, parent_tweet=parent_tweet)
 
 
-def create_retweet(user: User, tweet_uuid: UUID) -> None:
+def create_retweet(user: AbstractBaseUser, tweet_uuid: UUID) -> None:
     tweet = Tweet.objects.get(pk=tweet_uuid)
     Retweet.objects.create(tweet=tweet, user=user)
+    tweet.retweet_count += 1
+    tweet.save()
 
 
 def initial_tweet_form(tweet_uuid: UUID) -> dict[str, str]:
@@ -118,7 +131,7 @@ def initial_tweet_form(tweet_uuid: UUID) -> dict[str, str]:
     return initial
 
 
-def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: User) -> None:
+def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: AbstractBaseUser) -> None:
     with transaction.atomic():
         tweet = Tweet.objects.get(pk=tweet_uuid)
         if tweet.user != user:
@@ -149,11 +162,24 @@ def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: User) -> None:
         logger.info("Update tweet", extra=logger_data)
 
 
-def delete_tweet(tweet_uuid: UUID, user: User) -> None:
+def delete_tweet(tweet_uuid: UUID, user: AbstractBaseUser) -> None:
     tweet = Tweet.objects.get(pk=tweet_uuid)
     if tweet.user != user:
         logger.error("Tweet access denied", extra={"username": user.username, "tweet_id": tweet_uuid})
         raise AccessDeniedError("You do not have access to this tweet.")
     logger_data = {"username": user.username, "tweet_text": tweet.text}
-    Tweet.objects.filter(pk=tweet_uuid).delete()
+    tweet.delete()
     logger.info("Tweet deleted", extra=logger_data)
+
+
+def delete_retweet(retweet_pk: int, user: AbstractBaseUser) -> None:
+    retweet = Retweet.objects.get(pk=retweet_pk)
+    if retweet.user != user:
+        logger.error("Retweet access denied", extra={"username": user.username, "retweet_id": retweet_pk})
+        raise AccessDeniedError("You do not have acces to this retweet.")
+    logger_data = {"username": user.username, "retweet_id": retweet_pk}
+    tweet = retweet.tweet
+    retweet.delete()
+    tweet.retweet_count -= 1
+    tweet.save()
+    logger.info("Retweet deleted", extra=logger_data)

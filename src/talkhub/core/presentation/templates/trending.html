@@ -6,7 +6,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
 {% endblock static %}
 {% block body %}
-<h1>Popular tags for the last 24 hours. Country: {{ user.profile.country.name }}.</h1>
+{% if tags %}
+    <h1>Popular tags for the last 24 hours. Country: {{ user.profile.country.name }}.</h1>
+{% else %}
+    <h1>You haven't specified the country in the profile settings.</h1>
+{% endif %}
 <table>
 {% for tag in tags %}
     <tr>
