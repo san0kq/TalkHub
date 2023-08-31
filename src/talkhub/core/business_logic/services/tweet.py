@@ -19,6 +19,11 @@ logger = getLogger(__name__)
 
 
 def get_tweets(user: AbstractBaseUser) -> list[Tweet]:
+    """
+    Returns a list of all tweets and retweets made by users that
+    the authenticated user is subscribed to.
+    Annotations are added to gather additional data and distinguish between tweets and retweets.
+    """
     order_by = Config.objects.get(user=user).tweets_order
     tweets = (
         Tweet.objects.select_related("user", "parent_tweet")
@@ -57,6 +62,13 @@ def get_tweets(user: AbstractBaseUser) -> list[Tweet]:
 
 
 def create_tweet(data: CreateTweetDTO, user: AbstractBaseUser) -> None:
+    """
+    Function for creating a new tweet.
+
+    It checks for the presence of hashtags in the text and saves them to
+    the database if they don't already exist.
+    It associates the new tweet with the hashtags.
+    """
     with transaction.atomic():
         tags = re.findall(r"#\w+", data.text)
         if len(tags) > 20:
@@ -72,6 +84,9 @@ def create_tweet(data: CreateTweetDTO, user: AbstractBaseUser) -> None:
 
 
 def get_tweet_by_uuid(tweet_uuid: UUID) -> tuple[Tweet, list[Tweet]]:
+    """
+    Fetching information about a tweet and retrieving tweets that are replies to the parent tweet.
+    """
     try:
         tweet = (
             Tweet.objects.select_related("user__profile")
@@ -97,6 +112,11 @@ def get_tweet_by_uuid(tweet_uuid: UUID) -> tuple[Tweet, list[Tweet]]:
 
 
 def tweet_like(tweet_uuid: UUID, user: AbstractBaseUser) -> None:
+    """
+    The function handles liking or unliking a post.
+
+    It also creates or deletes an additional entry in the notifications model.
+    """
     with transaction.atomic():
         tweet = Tweet.objects.get(pk=tweet_uuid)
         rating = Rating.objects.get(name="like")
@@ -114,11 +134,17 @@ def tweet_like(tweet_uuid: UUID, user: AbstractBaseUser) -> None:
 
 
 def create_reply(data: CreateTweetDTO, user: AbstractBaseUser, parent_tweet_uuid: UUID) -> None:
+    """
+    Creating a reply to a parent tweet.
+    """
     parent_tweet = Tweet.objects.get(pk=parent_tweet_uuid)
     Tweet.objects.create(text=data.text, user=user, parent_tweet=parent_tweet)
 
 
 def create_retweet(user: AbstractBaseUser, tweet_uuid: UUID) -> None:
+    """
+    Creating a retweet and incrementing the retweet count in the Tweet model.
+    """
     tweet = Tweet.objects.get(pk=tweet_uuid)
     Retweet.objects.create(tweet=tweet, user=user)
     tweet.retweet_count += 1
@@ -126,16 +152,26 @@ def create_retweet(user: AbstractBaseUser, tweet_uuid: UUID) -> None:
 
 
 def initial_tweet_form(tweet_uuid: UUID) -> dict[str, str]:
+    """
+    Fetching the original data to populate a form when editing a tweet.
+    """
     text = Tweet.objects.get(pk=tweet_uuid).text
     initial = {"text": text}
     return initial
 
 
 def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: AbstractBaseUser) -> None:
+    """
+    Editing an existing tweet. Additionally, searching for hashtags in the
+    text and performing actions related to them in the database.
+    """
     with transaction.atomic():
         tweet = Tweet.objects.get(pk=tweet_uuid)
         if tweet.user != user:
-            logger.error("Tweet access denied", extra={"username": user.username, "tweet_id": tweet_uuid})
+            logger.error(
+                "Tweet access denied",
+                extra={"username": user.username, "tweet_id": tweet_uuid},
+            )
             raise AccessDeniedError("You do not have access to this tweet.")
 
         new_tags = re.findall(r"#\w+", data.text)
@@ -155,7 +191,11 @@ def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: AbstractBaseUser)
             logger.error("Max tag len", extra={"username": user.username})
             raise TagsError("The maximum tag length is 30 characters.")
 
-        logger_data = {"tweet_id": tweet_uuid, "old_text": tweet.text, "new_text": data.text}
+        logger_data = {
+            "tweet_id": tweet_uuid,
+            "old_text": tweet.text,
+            "new_text": data.text,
+        }
         tweet.text = data.text
         tweet.tags.set(tags)
         tweet.save()
@@ -165,7 +205,10 @@ def update_tweet(data: CreateTweetDTO, tweet_uuid: UUID, user: AbstractBaseUser)
 def delete_tweet(tweet_uuid: UUID, user: AbstractBaseUser) -> None:
     tweet = Tweet.objects.get(pk=tweet_uuid)
     if tweet.user != user:
-        logger.error("Tweet access denied", extra={"username": user.username, "tweet_id": tweet_uuid})
+        logger.error(
+            "Tweet access denied",
+            extra={"username": user.username, "tweet_id": tweet_uuid},
+        )
         raise AccessDeniedError("You do not have access to this tweet.")
     logger_data = {"username": user.username, "tweet_text": tweet.text}
     tweet.delete()
@@ -173,9 +216,15 @@ def delete_tweet(tweet_uuid: UUID, user: AbstractBaseUser) -> None:
 
 
 def delete_retweet(retweet_pk: int, user: AbstractBaseUser) -> None:
+    """
+    Deleting a retweet and decreasing the retweet count in the Tweet table.
+    """
     retweet = Retweet.objects.get(pk=retweet_pk)
     if retweet.user != user:
-        logger.error("Retweet access denied", extra={"username": user.username, "retweet_id": retweet_pk})
+        logger.error(
+            "Retweet access denied",
+            extra={"username": user.username, "retweet_id": retweet_pk},
+        )
         raise AccessDeniedError("You do not have acces to this retweet.")
     logger_data = {"username": user.username, "retweet_id": retweet_pk}
     tweet = retweet.tweet

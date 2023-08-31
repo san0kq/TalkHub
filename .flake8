@@ -2,5 +2,7 @@
 exclude = 
     .git,
     __pycache__,
-    venv
+    venv,
+    tokens
+    
 max-line-length = 120

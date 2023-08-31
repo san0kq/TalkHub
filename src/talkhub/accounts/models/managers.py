@@ -9,6 +9,13 @@ if TYPE_CHECKING:
 
 
 class UserManager(BaseUserManager):
+    """
+    A custom manager is used to create
+    regular users and superusers.
+
+    It's utilized for the functionality of a custom user model.
+    """
+
     def create_user(self, email: str, password: str, **extra_fields: Any) -> User:
         if not email:
             raise ValueError("The Email must be set")

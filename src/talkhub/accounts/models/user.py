@@ -9,6 +9,12 @@ from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Custom user model.
+
+    Registration is done through email.
+    """
+
     email = models.EmailField("email", unique=True)
     username = models.CharField("username", max_length=150, unique=True)
     date_of_birth = models.DateField(null=True, blank=True)

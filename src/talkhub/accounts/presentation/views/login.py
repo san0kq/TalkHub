@@ -16,6 +16,14 @@ from django.views import View
 
 
 class LoginView(View):
+    """
+    Controller for user authentication.
+
+    Supports both GET and POST requests.
+
+    If the user is already authenticated, it redirects to the main page of the website.
+    """
+
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return redirect("index")

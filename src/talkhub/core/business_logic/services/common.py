@@ -20,6 +20,10 @@ if TYPE_CHECKING:
 
 
 def replace_file_name_to_uuid(file: File) -> File:
+    """
+    Replacing the uploaded file's name
+    for users with a random UUID-based name.
+    """
     file_extansion = file.name.split(".")[-1]
     file_name = str(uuid.uuid4())
     file.name = file_name + "." + file_extansion
@@ -27,6 +31,11 @@ def replace_file_name_to_uuid(file: File) -> File:
 
 
 def change_file_size(file: InMemoryUploadedFile) -> InMemoryUploadedFile:
+    """
+    Resizing an image to optimize storage.
+
+    Returns a file stored in memory.
+    """
     format = file.content_type.split("/")[-1].upper()
     output = BytesIO()
     with Image.open(file) as image:
@@ -44,6 +53,12 @@ def change_file_size(file: InMemoryUploadedFile) -> InMemoryUploadedFile:
 
 
 def paginate_pages(request: HttpRequest, data: Iterable, per_page: int) -> tuple[Page, int, int]:
+    """
+    Function used for pagination in controllers.
+    It takes a request object to retrieve the page number if provided;
+    if not, it defaults to the first page.
+    It also takes data (an iterable object) and the maximum number of data objects per page.
+    """
     try:
         page_number = request.GET["page"]
     except KeyError:

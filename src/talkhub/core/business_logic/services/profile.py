@@ -8,7 +8,11 @@ from django.db import transaction
 from django.db.models import BigIntegerField, BooleanField, CharField, Count, F, UUIDField, Value
 
 if TYPE_CHECKING:
-    from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO, SearchProfileDTO
+    from core.business_logic.dto import (
+        ProfileEditDTO,
+        ProfileFollowDTO,
+        SearchProfileDTO,
+    )
     from uuid import UUID
     from django.contrib.auth.models import AbstractBaseUser
 
@@ -22,6 +26,14 @@ logger = getLogger(__name__)
 
 
 def get_profile(profile_uuid: UUID) -> tuple[Profile, list[Tweet]]:
+    """
+    Fetching user profile information from the database.
+    Retrieving a list of tweets and retweets by the user.
+
+    Additional annotations are used to gather extra data for the HTML template.
+
+    It returns a sorted combined array of all tweets and retweets.
+    """
     profile = (
         Profile.objects.select_related("country", "user__config")
         .prefetch_related("user__tweets", "user__retweets")
@@ -65,6 +77,9 @@ def get_profile(profile_uuid: UUID) -> tuple[Profile, list[Tweet]]:
 
 
 def initial_profile_form(user_pk: int) -> dict[str, str]:
+    """
+    Function to populate a form with existing user data when editing user information.
+    """
     user_model = get_user_model()
     user = user_model.objects.select_related("profile", "profile__country").get(pk=user_pk)
     initial_data = {
@@ -81,6 +96,11 @@ def initial_profile_form(user_pk: int) -> dict[str, str]:
 
 
 def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
+    """
+    Function for editing data of an authenticated user.
+
+    It checks whether any data has been changed and if so, it saves the changes to the database.
+    """
     with transaction.atomic():
         user_model = get_user_model()
 
@@ -139,28 +159,45 @@ def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
 
 
 def profile_follow(data: ProfileFollowDTO) -> None:
+    """
+    Function to subscribe to another user.
+    """
     profile = Profile.objects.get(pk=data.user.profile.pk)
     profile_following = Profile.objects.get(pk=data.profile_uuid)
     profile.followings.add(profile_following)
 
 
 def profile_unfollow(data: ProfileFollowDTO) -> None:
+    """
+    Function to unsubscribe from another user.
+    """
     profile = Profile.objects.get(pk=data.user.profile.pk)
     profile_following = Profile.objects.get(pk=data.profile_uuid)
     profile.followings.remove(profile_following)
 
 
 def profile_followings(profile_uuid: UUID) -> list[Profile | None]:
+    """
+    Fetching all users that another user is subscribed to.
+    """
     followings = Profile.objects.prefetch_related("followings").get(pk=profile_uuid).followings.all()
     return list(followings)
 
 
 def profile_followers(profile_uuid: UUID) -> list[Profile | None]:
+    """
+    Fetching all users who are subscribed to another user.
+    """
     followers = Profile.objects.prefetch_related("followings").get(pk=profile_uuid).followers.all()
     return list(followers)
 
 
 def search_profile(data: SearchProfileDTO) -> Optional[list[Profile]]:
+    """
+    Function for searching users.
+
+    It returns a list of users if at least one field has been filled out.
+    """
     if data.first_name or data.last_name or data.username:
         profiles = Profile.objects.select_related("user")
         if data.first_name:

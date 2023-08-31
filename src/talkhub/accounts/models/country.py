@@ -3,6 +3,10 @@ from django.db import models
 
 
 class Country(BaseModel):
+    """
+    The model is about countries. It is automatically filled in migrations.
+    """
+
     name = models.CharField(max_length=50, unique=True, verbose_name="country")
 
     class Meta:

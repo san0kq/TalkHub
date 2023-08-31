@@ -10,6 +10,14 @@ from django.core.exceptions import ValidationError
 
 
 class ValidateMinAge:
+    """
+    Age validation.
+
+    The minimum age is set during the class initialization.
+
+    The data from the form is passed to the __call__ method.
+    """
+
     def __init__(self, min_age: int) -> None:
         self._min_age = min_age
 
@@ -20,6 +28,14 @@ class ValidateMinAge:
 
 
 class ValidateMaxAge:
+    """
+    Age validation.
+
+    The maximum age is set during the class initialization.
+
+    The data from the form is passed to the __call__ method.
+    """
+
     def __init__(self, max_age: int) -> None:
         self._max_age = max_age
 
@@ -30,6 +46,12 @@ class ValidateMaxAge:
 
 
 class ValidateFileExtension:
+    """
+    File extension validation.
+
+    The list of allowed extensions is passed during class initialization.
+    """
+
     def __init__(self, available_extensions: list[str]) -> None:
         self._available_extensions = available_extensions
 
@@ -42,6 +64,12 @@ class ValidateFileExtension:
 
 
 class ValidateFileSize:
+    """
+    File size validation.
+
+    The maximum allowable value is passed during class initialization in bytes.
+    """
+
     def __init__(self, max_size: int) -> None:
         self._max_size = max_size
 

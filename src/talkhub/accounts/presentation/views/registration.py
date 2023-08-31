@@ -22,6 +22,14 @@ from core.presentation.converters import convert_data_from_form_to_dto
 
 
 class RegistrationView(View):
+    """
+    Controller for user registration.
+
+    If the user is already authenticated, it redirects to the main page.
+
+    Supports both POST and GET requests.
+    """
+
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return redirect("index")
@@ -44,13 +52,26 @@ class RegistrationView(View):
                 error_message = f"The username {data.username} already exists."
                 success_message = None
 
-            context = {"form": form, "success_message": success_message, "error_message": error_message}
+            context = {
+                "form": form,
+                "success_message": success_message,
+                "error_message": error_message,
+            }
             return render(request, "registration.html", context=context)
         else:
             return render(request, "registration.html", {"form": form})
 
 
 class ConfirmEmailView(View):
+    """
+    Controller for confirming the registration/email
+    change code sent to the user's email.
+
+    The user clicks on the link in the email and lands on this page.
+
+    Only GET requests.
+    """
+
     def get(self, request: HttpRequest) -> HttpResponse:
         confirmation_code = request.GET["code"]
         email = request.GET["email"]

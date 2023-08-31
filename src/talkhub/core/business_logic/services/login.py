@@ -15,6 +15,9 @@ logger = getLogger(__name__)
 
 
 def authenticate_user(data: LoginDTO) -> AbstractBaseUser:
+    """
+    User authentication on the website.
+    """
     user = authenticate(email=data.email, password=data.password)
     if user:
         logger.info("Successfully login", extra={"email": data.email})

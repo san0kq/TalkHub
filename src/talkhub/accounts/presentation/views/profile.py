@@ -29,6 +29,18 @@ from django.views import View
 
 
 class ProfileView(LoginRequiredMixin, View):
+    """
+    Controller for the profile page.
+
+    Supports only GET requests.
+
+    This controller handles not only the profile of the authenticated
+    user but also profiles of other users.
+    It supports pagination for proper display of profile tweets.
+
+    If the user is not authenticated, it redirects to the login page.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
@@ -40,12 +52,22 @@ class ProfileView(LoginRequiredMixin, View):
         except PageDoesNotExists as err:
             return HttpResponseBadRequest(content=err)
 
-        context = {"profile": profile, "tweets": tweets_paginated, "next_page": next_page, "prev_page": prev_page}
+        context = {
+            "profile": profile,
+            "tweets": tweets_paginated,
+            "next_page": next_page,
+            "prev_page": prev_page,
+        }
 
         return render(request, "profile.html", context=context)
 
 
 class ProfileEditView(LoginRequiredMixin, View):
+    """
+    Controller for editing user profile. Supports both GET and POST requests.
+    If the user is not authenticated, it redirects to the login page.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest) -> HttpResponse:
@@ -84,6 +106,13 @@ class ProfileEditView(LoginRequiredMixin, View):
 
 
 class FollowProfileView(LoginRequiredMixin, View):
+    """
+    Controller responsible for handling the request to
+    subscribe an authenticated user to another user.
+
+    Only GET requests.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
@@ -93,6 +122,13 @@ class FollowProfileView(LoginRequiredMixin, View):
 
 
 class UnfollowProfileView(LoginRequiredMixin, View):
+    """
+    Controller responsible for handling the request to
+    unsubscribe an authenticated user to another user.
+
+    Only GET requests.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
@@ -102,6 +138,13 @@ class UnfollowProfileView(LoginRequiredMixin, View):
 
 
 class ProfileFollowingsView(LoginRequiredMixin, View):
+    """
+    The controller is responsible for the page displaying
+    a list of users that the authenticated user is subscribed to.
+
+    It only supports GET requests.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
@@ -113,11 +156,21 @@ class ProfileFollowingsView(LoginRequiredMixin, View):
         except PageDoesNotExists as err:
             return HttpResponseBadRequest(content=err)
 
-        context = {"followings_paginated": followings_paginated, "prev_page": prev_page, "next_page": next_page}
+        context = {
+            "followings_paginated": followings_paginated,
+            "prev_page": prev_page,
+            "next_page": next_page,
+        }
         return render(request, "followings.html", context=context)
 
 
 class ProfileFollowersView(LoginRequiredMixin, View):
+    """
+    Displaying users who are subscribed to the authenticated user.
+
+    Only GET requests.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest, profile_uuid: UUID) -> HttpResponse:
@@ -129,11 +182,21 @@ class ProfileFollowersView(LoginRequiredMixin, View):
         except PageDoesNotExists as err:
             return HttpResponseBadRequest(content=err)
 
-        context = {"followers_paginated": followers_paginated, "prev_page": prev_page, "next_page": next_page}
+        context = {
+            "followers_paginated": followers_paginated,
+            "prev_page": prev_page,
+            "next_page": next_page,
+        }
         return render(request, "followers.html", context=context)
 
 
 class SearchProfileView(LoginRequiredMixin, View):
+    """
+    Searching for users on the website.
+
+    Accepts only GET requests with query parameters from the search form.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest) -> HttpResponse:

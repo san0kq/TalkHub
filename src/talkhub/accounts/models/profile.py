@@ -6,6 +6,14 @@ from django.db import models
 
 
 class Profile(BaseModel):
+    """
+    User profile.
+
+    It's used to store user data not related to authentication and authorization.
+    It's automatically created upon registration of a new user and filled with
+    data through the user's personal account.
+    """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
@@ -26,7 +34,11 @@ class Profile(BaseModel):
         related_query_name="profile",
     )
     followings = models.ManyToManyField(
-        to="self", symmetrical=False, related_name="followers", related_query_name="follower", blank=True
+        to="self",
+        symmetrical=False,
+        related_name="followers",
+        related_query_name="follower",
+        blank=True,
     )
 
     class Meta:

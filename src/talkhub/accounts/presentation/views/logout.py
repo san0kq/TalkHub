@@ -11,6 +11,12 @@ from django.views import View
 
 
 class LogoutView(View):
+    """
+    Controller for logging out of the account.
+
+    Supports only GET requests.
+    """
+
     def get(self, request: HttpRequest) -> HttpResponse:
         logout(request=request)
         return redirect("signin")

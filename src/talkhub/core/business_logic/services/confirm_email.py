@@ -19,6 +19,9 @@ logger = getLogger(__name__)
 
 
 def send_confirm_code(user: AbstractBaseUser, email: str) -> None:
+    """
+    Generates and sends a confirmation code for registration or email change to the user's email.
+    """
     confirmation_code = str(uuid.uuid4())
     code_expiration_time = int(time.time()) + settings.CONFIRMATION_CODE_LIFETIME
 
@@ -39,16 +42,26 @@ def send_confirm_code(user: AbstractBaseUser, email: str) -> None:
 
 
 def confirm_user_email(confirmation_code: str, email: str) -> None:
+    """
+    Used to access the database to authenticate the code received by the user via email.
+    """
     try:
         code_data = EmailConfirmationCode.objects.get(code=confirmation_code)
     except EmailConfirmationCode.DoesNotExist as err:
-        logger.error("Provided code doesn't exists.", exc_info=err, extra={"code": confirmation_code})
+        logger.error(
+            "Provided code doesn't exists.",
+            exc_info=err,
+            extra={"code": confirmation_code},
+        )
         raise ConfirmationCodeNotExists
 
     if time.time() > code_data.expiration:
         logger.info(
             "Provided expiration code expired.",
-            extra={"current_time": str(time.time()), "code_expiration": str(code_data.expiration)},
+            extra={
+                "current_time": str(time.time()),
+                "code_expiration": str(code_data.expiration),
+            },
         )
         raise ConfirmationCodeExpired
 

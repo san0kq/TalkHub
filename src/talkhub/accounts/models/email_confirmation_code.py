@@ -4,6 +4,13 @@ from django.db import models
 
 
 class EmailConfirmationCode(BaseModel):
+    """
+    It's used for storing confirmation codes
+    sent to email during registration or email change.
+    It's tied to the user and has
+    a specified storage time in Unix format.
+    """
+
     code = models.CharField(max_length=100, unique=True)
     user = models.OneToOneField(
         to=get_user_model(),

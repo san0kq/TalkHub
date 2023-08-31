@@ -6,6 +6,11 @@ COUNTRIES = [(country.name, country.name) for country in Country.objects.all()]
 
 
 class ProfileEditForm(forms.Form):
+    """
+    Form for users to fill in data when editing their profile information.
+
+    """
+
     username = forms.CharField(label="Username", max_length=150)
     first_name = forms.CharField(label="First name", max_length=150)
     last_name = forms.CharField(label="Last name", max_length=150)
@@ -15,7 +20,10 @@ class ProfileEditForm(forms.Form):
     avatar = forms.ImageField(
         label="Avatar",
         allow_empty_file=False,
-        validators=[ValidateFileExtension(["jpg", "jpeg", "png"]), ValidateFileSize(5_000_000)],
+        validators=[
+            ValidateFileExtension(["jpg", "jpeg", "png"]),
+            ValidateFileSize(5_000_000),
+        ],
         required=False,
     )
     date_of_birth = forms.DateField(
