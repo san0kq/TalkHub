@@ -27,7 +27,9 @@
     <div class="profile-info">
       <div class="profile-edit">
         <h2>{{ profile.first_name}} {{ profile.last_name }}</h2>
-        <a href="{% url 'profile-edit' %}" class="btn-edit">&#9997;</a>
+        {% if profile.user == user %}
+          <a href="{% url 'profile-edit' %}" class="btn-edit">&#9997;</a>
+        {% endif %}
       </div>
       <p>Username: {{ profile.user.username }}</p>
       <p>Email: {{ profile.user.email }}</p>

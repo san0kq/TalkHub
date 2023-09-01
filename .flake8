@@ -3,6 +3,6 @@ exclude =
     .git,
     __pycache__,
     venv,
-    tokens
+    src/talkhub/talkhub/populate_db/rand_gen/providers/tokens
     
 max-line-length = 120
