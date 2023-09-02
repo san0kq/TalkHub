@@ -33,7 +33,7 @@ class UserDAO:
             )
             user.is_active = True
             user.save()
-            Config.objects.create(tweets_order="-created_at", user=user)
+            Config.objects.create(tweets_order="-sort_date", user=user)
 
     def get_user_ids_list(self) -> list[int]:
         user_model = get_user_model()

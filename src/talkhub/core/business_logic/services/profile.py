@@ -121,17 +121,20 @@ def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
             send_confirm_code(user=user, email=data.email)
 
         if user.date_of_birth != data.date_of_birth:
-            logger_data["old_date_of_birth"] = user.date_of_birth
+            if user.date_of_birth:
+                logger_data["old_date_of_birth"] = user.date_of_birth
             logger_data["new_date_of_birth"] = data.date_of_birth
             user.date_of_birth = data.date_of_birth
 
         if profile.first_name != data.first_name:
-            logger_data["old_first_name"] = profile.first_name
+            if profile.first_name:
+                logger_data["old_first_name"] = profile.first_name
             logger_data["new_first_name"] = data.first_name
             profile.first_name = data.first_name
 
         if profile.last_name != data.last_name:
-            logger_data["old_last_name"] = profile.last_name
+            if profile.last_name:
+                logger_data["old_last_name"] = profile.last_name
             logger_data["new_last_name"] = data.last_name
             profile.last_name = data.last_name
 
@@ -144,12 +147,14 @@ def profile_edit(data: ProfileEditDTO, user_pk: int) -> None:
                 profile.avatar = None
 
         if profile.about != data.about:
-            logger_data["old_about"] = profile.about
+            if profile.about:
+                logger_data["old_about"] = profile.about
             logger_data["new_about"] = data.about
             profile.about = data.about
 
         if profile.country != country:
-            logger_data["old_country"] = profile.country.name
+            if profile.country:
+                logger_data["old_country"] = profile.country.name
             logger_data["new_country"] = country.name
             profile.country = country
 
