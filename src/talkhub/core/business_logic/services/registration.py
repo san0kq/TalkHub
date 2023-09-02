@@ -32,7 +32,7 @@ def create_user(data: RegistrationDTO) -> None:
     created_user = user_model.objects.create_user(
         email=data.email, password=data.password, username=data.username, date_of_birth=data.date_of_birth
     )
-    Config.objects.create(tweets_order="-created_at", user=created_user)
+    Config.objects.create(tweets_order="-sort_date", user=created_user)
     Profile.objects.create(user=created_user)
     logger.info("Register user", extra={"user_id": created_user.pk})
     send_confirm_code(user=created_user, email=data.email)

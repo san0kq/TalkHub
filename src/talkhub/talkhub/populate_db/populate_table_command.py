@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.db import IntegrityError
+from django.db import DataError, IntegrityError
 
 if TYPE_CHECKING:
     from interfaces import CreateRecordProtocol, FakeFactoryProtocol
@@ -27,5 +27,7 @@ class PopulateTable:
                     new_record = self._fake_factory.generate()
                     self._dao.create(data=new_record)
                 except IntegrityError:
+                    continue
+                except DataError:
                     continue
                 check = False

@@ -137,8 +137,21 @@ def create_reply(data: CreateTweetDTO, user: AbstractBaseUser, parent_tweet_uuid
     """
     Creating a reply to a parent tweet.
     """
-    parent_tweet = Tweet.objects.get(pk=parent_tweet_uuid)
-    Tweet.objects.create(text=data.text, user=user, parent_tweet=parent_tweet)
+    with transaction.atomic():
+        tags = re.findall(r"#\w+", data.text)
+
+        if len(tags) > 20:
+            logger.error("Max number of tags", extra={"username": user.username})
+            raise TagsError("Maximum number of tags is 20.")
+        try:
+            tags = [Tag.objects.get_or_create(name=tag.lower()[1::])[0] for tag in tags]
+        except DataError:
+            logger.error("Max tag len", extra={"username": user.username})
+            raise TagsError("The maximum tag length is 30 characters.")
+
+        parent_tweet = Tweet.objects.get(pk=parent_tweet_uuid)
+        tweet = Tweet.objects.create(text=data.text, user=user, parent_tweet=parent_tweet)
+        tweet.tags.set(tags)
 
 
 def create_retweet(user: AbstractBaseUser, tweet_uuid: UUID) -> None:

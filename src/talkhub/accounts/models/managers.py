@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 from django.contrib.auth.base_user import BaseUserManager
 
 if TYPE_CHECKING:
-    from .user import User
+    from django.contrib.auth.models import AbstractBaseUser
 
 
 class UserManager(BaseUserManager):
@@ -16,16 +16,16 @@ class UserManager(BaseUserManager):
     It's utilized for the functionality of a custom user model.
     """
 
-    def create_user(self, email: str, password: str, **extra_fields: Any) -> User:
+    def create_user(self, email: str, password: str, **extra_fields: Any) -> AbstractBaseUser:
         if not email:
             raise ValueError("The Email must be set")
         email = self.normalize_email(email)
-        user: User = self.model(email=email, **extra_fields)
+        user: AbstractBaseUser = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email: str, password: str, **extra_fields: Any) -> User:
+    def create_superuser(self, email: str, password: str, **extra_fields: Any) -> AbstractBaseUser:
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)

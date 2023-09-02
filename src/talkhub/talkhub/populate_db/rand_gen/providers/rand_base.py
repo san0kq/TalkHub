@@ -5,7 +5,7 @@ from typing import Optional
 
 class AbstractBase(ABC):
     @abstractmethod
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def _first_token(self) -> str:
