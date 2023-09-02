@@ -3,11 +3,6 @@ from accounts.presentation.validators import ValidateFileExtension, ValidateFile
 from django import forms
 
 
-def countries():
-    countries = [(country.name, country.name) for country in Country.objects.all()]
-    return countries
-
-
 class ProfileEditForm(forms.Form):
     """
     Form for users to fill in data when editing their profile information.
@@ -19,7 +14,7 @@ class ProfileEditForm(forms.Form):
     last_name = forms.CharField(label="Last name", max_length=150, required=False)
     email = forms.EmailField(label="Email", max_length=254)
     about = forms.CharField(label="About me", max_length=400, widget=forms.Textarea, required=False)
-    country = forms.ChoiceField(label="Country", choices=countries(), required=False)
+    country = forms.ChoiceField(label="Country", choices=[], required=False)
     avatar = forms.ImageField(
         label="Avatar",
         allow_empty_file=False,
@@ -35,6 +30,15 @@ class ProfileEditForm(forms.Form):
         validators=[ValidateMinAge(min_age=18), ValidateMaxAge(max_age=140)],
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["country"].choices = self.country_choices()
+
+    def country_choices(self):
+        countries = [(country.name, country.name) for country in Country.objects.all()]
+        return countries
 
 
 class SearchProfileForm(forms.Form):

@@ -1,4 +1,4 @@
-FROM python:3.10 as requirements_stage
+FROM python:3.11 as requirements_stage
 
 ENV PYTHONUNBUFFERED=1
 
@@ -10,7 +10,7 @@ COPY ./pyproject.toml ./poetry.lock* /tmp/
 
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM python:3.10
+FROM python:3.11
 
 WORKDIR /project
 
@@ -23,4 +23,4 @@ RUN apt-get update \
 
 COPY . /project
 
-CMD ["python3", "./src/jobboard_app/manage.py", "runserver"]
+CMD ["python3", "./src/talkhub/manage.py", "runserver"]
