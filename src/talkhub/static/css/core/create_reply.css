@@ -102,6 +102,10 @@
     background: transparent;
     cursor: pointer;
 }
+.retweet-active {
+    border: 0;
+    background: transparent;
+}
 form {
     margin: 2rem auto;
     max-width: 350px;

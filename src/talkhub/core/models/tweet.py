@@ -7,6 +7,12 @@ from .base import BaseModel
 
 
 class Tweet(BaseModel):
+    """
+    Model for storing tweets.
+
+    Parent_tweet is used to establish a chain of replies to tweets.
+    """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.CharField(max_length=400)
     user = models.ForeignKey(

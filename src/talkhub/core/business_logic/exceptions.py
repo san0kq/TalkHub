@@ -32,3 +32,7 @@ class AccessDeniedError(Exception):
 
 class TweetDoesNotExists(Exception):
     pass
+
+
+class RetweetAlreadyExistsError(Exception):
+    pass

@@ -4,6 +4,10 @@ from .base import BaseModel
 
 
 class Tag(BaseModel):
+    """
+    Storage of unique tags.
+    """
+
     name = models.CharField(max_length=30, unique=True, verbose_name="tag")
 
     class Meta:

@@ -5,6 +5,10 @@ from .base import BaseModel
 
 
 class Config(BaseModel):
+    """
+    User settings storage model. It can be extended.
+    """
+
     tweets_order = models.CharField(max_length=20)
     user = models.OneToOneField(
         to=get_user_model(), related_name="config", related_query_name="config", on_delete=models.CASCADE

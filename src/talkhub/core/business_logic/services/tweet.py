@@ -4,7 +4,7 @@ import re
 from logging import getLogger
 from typing import TYPE_CHECKING
 
-from django.db import DataError, transaction
+from django.db import DataError, IntegrityError, transaction
 from django.db.models import BigIntegerField, BooleanField, CharField, Count, F, UUIDField, Value
 
 if TYPE_CHECKING:
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from core.business_logic.dto import CreateTweetDTO
     from uuid import UUID
 
-from core.business_logic.exceptions import AccessDeniedError, TagsError, TweetDoesNotExists
+from core.business_logic.exceptions import AccessDeniedError, RetweetAlreadyExistsError, TagsError, TweetDoesNotExists
 from core.models import Config, Notification, NotificationType, Rating, Retweet, Tag, Tweet, TweetRating
 
 logger = getLogger(__name__)
@@ -159,7 +159,10 @@ def create_retweet(user: AbstractBaseUser, tweet_uuid: UUID) -> None:
     Creating a retweet and incrementing the retweet count in the Tweet model.
     """
     tweet = Tweet.objects.get(pk=tweet_uuid)
-    Retweet.objects.create(tweet=tweet, user=user)
+    try:
+        Retweet.objects.create(tweet=tweet, user=user)
+    except IntegrityError:
+        raise RetweetAlreadyExistsError("You have already retweeted this tweet.")
     tweet.retweet_count += 1
     tweet.save()
 

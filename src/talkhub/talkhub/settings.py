@@ -62,9 +62,9 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            "templates",
-            "accounts/presentation/templates",
-            "core/presentation/templates",
+            os.path.join(BASE_DIR, "templates"),
+            os.path.join(BASE_DIR, "accounts", "presentation", "templates"),
+            os.path.join(BASE_DIR, "core", "presentation", "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -91,7 +91,7 @@ DATABASES = {
         "USER": config("DB_USER"),
         "PASSWORD": config("DB_PASSWORD"),
         "HOST": config("DB_HOST"),
-        "PORT": 5432,
+        "PORT": config("DB_PORT"),
     }
 }
 
@@ -186,3 +186,6 @@ EMAIL_FROM = config("EMAIL_FROM")
 EMAIL_BACKEND = config("EMAIL_BACKEND")
 
 SERVER_HOST = config("SERVER_HOST")
+
+
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": config("REDIS_URL")}}

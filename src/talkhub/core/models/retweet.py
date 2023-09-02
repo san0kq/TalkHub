@@ -5,6 +5,10 @@ from .base import BaseModel
 
 
 class Retweet(BaseModel):
+    """
+    Retweet model: stores the tweet that was retweeted and the user who retweeted it.
+    """
+
     tweet = models.ForeignKey(
         to="Tweet", related_name="retweets", related_query_name="retweet", on_delete=models.CASCADE
     )

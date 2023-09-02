@@ -12,7 +12,13 @@ if TYPE_CHECKING:
     from uuid import UUID
 
 from core.business_logic.dto import CreateTweetDTO
-from core.business_logic.exceptions import AccessDeniedError, PageDoesNotExists, TagsError, TweetDoesNotExists
+from core.business_logic.exceptions import (
+    AccessDeniedError,
+    PageDoesNotExists,
+    RetweetAlreadyExistsError,
+    TagsError,
+    TweetDoesNotExists,
+)
 from core.business_logic.services import (
     create_reply,
     create_retweet,
@@ -131,7 +137,11 @@ class RetweetView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         user = request.user
-        create_retweet(user=user, tweet_uuid=tweet_uuid)
+        try:
+            create_retweet(user=user, tweet_uuid=tweet_uuid)
+        except RetweetAlreadyExistsError:
+            current_page = request.META.get("HTTP_REFERER")
+            return redirect(current_page)
         return redirect("profile", profile_uuid=user.profile.pk)
 
 

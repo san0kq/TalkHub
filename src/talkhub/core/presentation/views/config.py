@@ -12,6 +12,12 @@ from django.views import View
 
 
 class UpdateConfig(LoginRequiredMixin, View):
+    """
+    Controller responsible for user configuration changes.
+
+    Parameters are set by selecting options in the user profile.
+    """
+
     login_url = "signin"
 
     def post(self, request: HttpRequest) -> HttpResponse:

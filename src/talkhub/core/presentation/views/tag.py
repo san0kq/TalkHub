@@ -13,10 +13,16 @@ from core.presentation.forms import SearchTagForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import cache_page
 
 
 class TagsView(LoginRequiredMixin, View):
+    """
+    Controller for searching tweets by tags. It uses a GET request to search by tag.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest) -> HttpResponse:
@@ -43,8 +49,13 @@ class TagsView(LoginRequiredMixin, View):
 
 
 class TrendingView(LoginRequiredMixin, View):
+    """
+    Controller for the trending page by country. It utilizes caching.
+    """
+
     login_url = "signin"
 
+    @method_decorator(cache_page(60 * 5))
     def get(self, request: HttpRequest) -> HttpResponse:
         data = TrendingDTO(user=request.user)
         tags = get_trending_tags(data=data)

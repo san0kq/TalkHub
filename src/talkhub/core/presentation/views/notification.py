@@ -15,6 +15,10 @@ from django.views import View
 
 
 class NotificationView(LoginRequiredMixin, View):
+    """
+    Controller responsible for displaying all notifications to the user.
+    """
+
     login_url = "signin"
 
     def get(self, request: HttpRequest) -> HttpResponse:

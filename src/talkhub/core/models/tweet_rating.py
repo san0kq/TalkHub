@@ -5,6 +5,10 @@ from .base import BaseModel
 
 
 class TweetRating(BaseModel):
+    """
+    Storage of user reactions to tweets.
+    """
+
     tweet = models.ForeignKey(to="Tweet", related_name="ratings", related_query_name="rating", on_delete=models.CASCADE)
     rating = models.ForeignKey(
         to="Rating", related_name="ratings", related_query_name="rating", on_delete=models.CASCADE

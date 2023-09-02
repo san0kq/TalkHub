@@ -5,6 +5,12 @@ from .base import BaseModel
 
 
 class Notification(BaseModel):
+    """
+    User notification model.
+
+    Currently used for notifying about likes and administrative notifications.
+    """
+
     text = models.CharField(max_length=100, blank=True)
     tweet = models.ForeignKey(
         to="Tweet",
