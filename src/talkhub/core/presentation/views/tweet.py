@@ -28,10 +28,10 @@ from core.business_logic.services import (
     get_tweet_by_uuid,
     get_tweets,
     initial_tweet_form,
-    paginate_pages,
     tweet_like,
     update_tweet,
 )
+from core.presentation.common import paginate_pages
 from core.presentation.converters import convert_data_from_form_to_dto
 from core.presentation.forms import CreateTweetForm
 

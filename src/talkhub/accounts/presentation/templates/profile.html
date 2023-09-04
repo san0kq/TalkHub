@@ -77,7 +77,9 @@
 <div class="tweets" id="tweets">
   <div class="tweet-act">
     <h2>Tweets</h2>
-    <button type="submit" class="btn-new-tweet" onclick="window.location.href='{% url 'create-tweet' %}'; return false">New tweet</button>
+    {% if profile.user == user %}
+      <button type="submit" class="btn-new-tweet" onclick="window.location.href='{% url 'create-tweet' %}'; return false">New tweet</button>
+    {% endif %}
   </div>
   {% for tweet in tweets %}
     <div class="tweet">

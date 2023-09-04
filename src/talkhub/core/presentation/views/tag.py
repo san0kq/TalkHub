@@ -7,7 +7,8 @@ if TYPE_CHECKING:
 
 from core.business_logic.dto import SearchTagDTO, TrendingDTO
 from core.business_logic.exceptions import PageDoesNotExists
-from core.business_logic.services import find_tags, get_trending_tags, paginate_pages
+from core.business_logic.services import find_tags, get_trending_tags
+from core.presentation.common import paginate_pages
 from core.presentation.converters import convert_data_from_form_to_dto
 from core.presentation.forms import SearchTagForm
 from django.contrib.auth.mixins import LoginRequiredMixin

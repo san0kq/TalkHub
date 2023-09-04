@@ -14,7 +14,6 @@ from core.business_logic.exceptions import EmailAlreadyExistsError, PageDoesNotE
 from core.business_logic.services import (
     get_profile,
     initial_profile_form,
-    paginate_pages,
     profile_edit,
     profile_follow,
     profile_followers,
@@ -22,6 +21,7 @@ from core.business_logic.services import (
     profile_unfollow,
     search_profile,
 )
+from core.presentation.common import paginate_pages
 from core.presentation.converters import convert_data_from_form_to_dto
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render

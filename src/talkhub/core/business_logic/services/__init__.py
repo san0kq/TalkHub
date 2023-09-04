@@ -25,7 +25,6 @@ from .profile import (
 )
 from .update_config import update_config
 from .tag import find_tags, get_trending_tags
-from .common import paginate_pages
 from .notification import get_notifications
 
 
@@ -47,7 +46,6 @@ __all__ = [
     "create_retweet",
     "find_tags",
     "get_trending_tags",
-    "paginate_pages",
     "initial_tweet_form",
     "update_tweet",
     "delete_tweet",
