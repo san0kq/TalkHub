@@ -30,7 +30,7 @@ def run_populate_db(records_number: int) -> None:
     followings_factory = FollowingsFactory(
         profile_id_provider=RandomValueFromListProvider(values=profiles),
     )
-    PopulateTable(records_number=records_number * 2, dao=following_dao, fake_factory=followings_factory).execute()
+    PopulateTable(records_number=records_number * 20, dao=following_dao, fake_factory=followings_factory).execute()
 
     users = user_dao.get_user_ids_list()
     tweet_dao = TweetDAO()
@@ -39,7 +39,7 @@ def run_populate_db(records_number: int) -> None:
         text_provider=RandGen(RandText),
         tag_provider=RandGen(RandWord),
     )
-    PopulateTable(records_number=records_number * 2, dao=tweet_dao, fake_factory=tweet_factory).execute()
+    PopulateTable(records_number=records_number * 10, dao=tweet_dao, fake_factory=tweet_factory).execute()
 
     tweets = tweet_dao.get_tweet_ids_list()
     retweet_dao = RetweetDAO()
@@ -47,7 +47,7 @@ def run_populate_db(records_number: int) -> None:
         user_id_provider=RandomValueFromListProvider(values=users),
         tweet_id_provider=RandomValueFromListProvider(values=tweets),
     )
-    PopulateTable(records_number=records_number, dao=retweet_dao, fake_factory=retweet_factory).execute()
+    PopulateTable(records_number=records_number * 2, dao=retweet_dao, fake_factory=retweet_factory).execute()
 
     reply_dao = ReplyDAO()
     reply_factory = ReplyFactory(
@@ -56,7 +56,7 @@ def run_populate_db(records_number: int) -> None:
         text_provider=RandGen(RandText),
         tag_provider=RandGen(RandWord),
     )
-    PopulateTable(records_number=records_number * 2, dao=reply_dao, fake_factory=reply_factory).execute()
+    PopulateTable(records_number=records_number * 3, dao=reply_dao, fake_factory=reply_factory).execute()
 
     like_dao = LikeDAO()
     like_factory = LikeFactory(
@@ -69,4 +69,4 @@ def run_populate_db(records_number: int) -> None:
     notification_factory = NotificationFactory(
         user_id_provider=RandomValueFromListProvider(values=users), text_provider=RandGen(RandText)
     )
-    PopulateTable(records_number=records_number * 2, dao=notification_dao, fake_factory=notification_factory).execute()
+    PopulateTable(records_number=records_number * 3, dao=notification_dao, fake_factory=notification_factory).execute()

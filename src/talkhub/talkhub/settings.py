@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "accounts",
     "core",
     "django_cleanup.apps.CleanupConfig",
@@ -64,8 +65,8 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             os.path.join(BASE_DIR, "templates"),
-            os.path.join(BASE_DIR, "accounts", "presentation", "templates"),
-            os.path.join(BASE_DIR, "core", "presentation", "templates"),
+            os.path.join(BASE_DIR, "accounts", "presentation", "web", "templates"),
+            os.path.join(BASE_DIR, "core", "presentation", "web", "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {

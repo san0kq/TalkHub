@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 from core.business_logic.exceptions import PageDoesNotExists
 from core.business_logic.services import get_notifications
-from core.presentation.common import paginate_pages
+from core.presentation.web.common import paginate_pages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render

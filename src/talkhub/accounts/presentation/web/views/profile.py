@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
     from uuid import UUID
 
-from accounts.presentation.forms import ProfileEditForm, SearchProfileForm
+from accounts.presentation.web.forms import ProfileEditForm, SearchProfileForm
 from core.business_logic.dto import ProfileEditDTO, ProfileFollowDTO, SearchProfileDTO
 from core.business_logic.exceptions import EmailAlreadyExistsError, PageDoesNotExists, UsernameAlreadyExistsError
 from core.business_logic.services import (
@@ -21,8 +21,8 @@ from core.business_logic.services import (
     profile_unfollow,
     search_profile,
 )
-from core.presentation.common import paginate_pages
-from core.presentation.converters import convert_data_from_form_to_dto
+from core.presentation.common import convert_data_from_request_to_dto
+from core.presentation.web.common import paginate_pages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.views import View
@@ -83,7 +83,7 @@ class ProfileEditView(LoginRequiredMixin, View):
         error_message: UsernameAlreadyExistsError | EmailAlreadyExistsError | None = None
 
         if form.is_valid():
-            data = convert_data_from_form_to_dto(dto=ProfileEditDTO, data_from_form=form.cleaned_data)
+            data = convert_data_from_request_to_dto(dto=ProfileEditDTO, data_from_form=form.cleaned_data)
 
             try:
                 profile_edit(data=data, user_pk=user.pk)
@@ -202,7 +202,7 @@ class SearchProfileView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         form = SearchProfileForm(request.GET)
         if form.is_valid():
-            data = convert_data_from_form_to_dto(dto=SearchProfileDTO, data_from_form=form.cleaned_data)
+            data = convert_data_from_request_to_dto(dto=SearchProfileDTO, data_from_form=form.cleaned_data)
             profiles = search_profile(data=data)
             form = SearchProfileForm()
 

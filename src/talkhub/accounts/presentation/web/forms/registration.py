@@ -1,4 +1,4 @@
-from accounts.presentation.validators import ValidateMaxAge, ValidateMinAge
+from accounts.presentation.web.validators import ValidateMaxAge, ValidateMinAge
 from django import forms
 
 

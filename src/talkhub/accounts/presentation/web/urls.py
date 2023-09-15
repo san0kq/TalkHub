@@ -1,4 +1,4 @@
-from accounts.presentation.views import (
+from accounts.presentation.web.views import (
     ConfirmEmailView,
     FollowProfileView,
     LoginView,

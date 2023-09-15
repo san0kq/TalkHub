@@ -1,4 +1,4 @@
-from core.presentation.views import (
+from core.presentation.web.views import (
     CreateTweet,
     DeleteRetweetView,
     DeleteTweetView,

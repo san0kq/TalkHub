@@ -1,5 +1,5 @@
 from accounts.models import Country
-from accounts.presentation.validators import ValidateFileExtension, ValidateFileSize, ValidateMaxAge, ValidateMinAge
+from accounts.presentation.web.validators import ValidateFileExtension, ValidateFileSize, ValidateMaxAge, ValidateMinAge
 from django import forms
 
 

@@ -9,7 +9,7 @@ from django.views import View
 if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
-from accounts.presentation.forms import RegistrationForm
+from accounts.presentation.web.forms import RegistrationForm
 from core.business_logic.dto import RegistrationDTO
 from core.business_logic.exceptions import (
     ConfirmationCodeExpired,
@@ -18,7 +18,7 @@ from core.business_logic.exceptions import (
     UsernameAlreadyExistsError,
 )
 from core.business_logic.services import confirm_user_email, create_user
-from core.presentation.converters import convert_data_from_form_to_dto
+from core.presentation.common import convert_data_from_request_to_dto
 
 
 class RegistrationView(View):
@@ -40,7 +40,9 @@ class RegistrationView(View):
     def post(self, request: HttpRequest) -> HttpResponse:
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            data: RegistrationDTO = convert_data_from_form_to_dto(dto=RegistrationDTO, data_from_form=form.cleaned_data)
+            data: RegistrationDTO = convert_data_from_request_to_dto(
+                dto=RegistrationDTO, data_from_form=form.cleaned_data
+            )
             error_message = None
             success_message: str | None = "Confirmation email sent. Please confirm it by the link."
             try:

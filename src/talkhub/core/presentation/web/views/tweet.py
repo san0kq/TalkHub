@@ -31,9 +31,9 @@ from core.business_logic.services import (
     tweet_like,
     update_tweet,
 )
-from core.presentation.common import paginate_pages
-from core.presentation.converters import convert_data_from_form_to_dto
-from core.presentation.forms import CreateTweetForm
+from core.presentation.common import convert_data_from_request_to_dto
+from core.presentation.web.common import paginate_pages
+from core.presentation.web.forms import CreateTweetForm
 
 
 class IndexView(LoginRequiredMixin, View):
@@ -64,7 +64,7 @@ class CreateTweet(LoginRequiredMixin, View):
         form = CreateTweetForm(request.POST)
         if form.is_valid():
             user = request.user
-            data = convert_data_from_form_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
+            data = convert_data_from_request_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
             try:
                 create_tweet(data=data, user=user)
                 return redirect("profile", profile_uuid=user.profile.pk)
@@ -123,7 +123,7 @@ class TweetReplyView(LoginRequiredMixin, View):
         form = CreateTweetForm(request.POST)
         if form.is_valid():
             user = request.user
-            data = convert_data_from_form_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
+            data = convert_data_from_request_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
             create_reply(data=data, user=user, parent_tweet_uuid=parent_tweet_uuid)
             return redirect("tweet", tweet_uuid=parent_tweet_uuid)
         else:
@@ -157,7 +157,7 @@ class UpdateTweetView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest, tweet_uuid: UUID) -> HttpResponse:
         form = CreateTweetForm(request.POST)
         if form.is_valid():
-            data = convert_data_from_form_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
+            data = convert_data_from_request_to_dto(dto=CreateTweetDTO, data_from_form=form.cleaned_data)
             error_message: AccessDeniedError | TagsError | None = None
             try:
                 update_tweet(data=data, tweet_uuid=tweet_uuid, user=request.user)
